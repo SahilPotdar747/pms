@@ -1,0 +1,48 @@
+
+Git commands:
+1. Clone a repository from TFS/Azure DevOps or Git
+git clone <URL of repository>
+
+e.g.
+git clone https://gpainuly.visualstudio.com/DefaultCollection/UrgeTruck/_git/UrgeTruck
+
+2. Create a new branch to start your coding
+git checheckout -b <branchname>
+
+3. Take update from cloud (TFS/ Azure DevOps / git)
+git pull origin master (main) - master and main is branch name of cloud
+
+4. set user name in git: 
+git config --global user.name "FIRST_NAME LAST_NAME"
+git config --global user.email "MY_NAME@example.com"
+
+e.g. 
+git config --global user.name "abc efg"
+git config --global user.email "kemar.dev1@outlook.com" 
+
+
+DB Migration commands: (always open repository layer project in command prompt to execute the below commands. otherwise it'll throw - target project assembly doest not match with your migration assembly)
+ 1- Add new first time migration. First install .net core entity framework 
+
+ dotnet tool install --global dotnet-ef
+ 2. add migration
+ dotnet ef migrations add InitialCreateTable --startup-project ../Kemar.UrgeTruck.Api/Kemar.UrgeTruck.Api.csproj
+
+ dotnet ef migrations add InitialCreateTable --startup-project ../Kemar.UrgeTruck.Api/Kemar.UrgeTruck.Api.csproj --context KUrgeTruckContext
+ 
+ 3. Remove last Migration 
+ dotnet ef migrations remove --startup-project ../Kemar.UrgeTruck.Api/Kemar.UrgeTruck.Api.csproj
+
+ 4. Update database
+ dotnet ef database update --startup-project ../Kemar.UrgeTruck.Api/Kemar.UrgeTruck.Api.csproj
+
+ dotnet ef database update --startup-project ../Kemar.UrgeTruck.Api/Kemar.UrgeTruck.Api.csproj --context KUrgeTruckContext
+
+ 5. Generate script
+ dotnet ef migrations script -o myscript.sql --startup-project ../Kemar.UrgeTruck.Api/Kemar.UrgeTruck.Api.csproj
+
+ 6. Generate script for a specific migration
+ dotnet ef migrations script <frommigrationName>  <ToMigraiontName> -o myscript.sql --startup-project ../Kemar.UrgeTruck.Api/Kemar.UrgeTruck.Api.csproj
+
+ 7. Generate migraiton only for the script which is not updated in database
+ dotnet ef migrations script --idempotent --startup-project ../Kemar.UrgeTruck.Api/Kemar.UrgeTruck.Api.csproj

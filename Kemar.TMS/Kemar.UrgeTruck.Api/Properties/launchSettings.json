@@ -1,0 +1,43 @@
+//{
+//  "profiles": {
+//    "Kemar.TMS.Api": {
+//      "commandName": "Project",
+//      "launchBrowser": true,
+//      "launchUrl": "UrgeTruck",
+//      "environmentVariables": {
+//        "ASPNETCORE_ENVIRONMENT": "Development"
+//      },
+//      "applicationUrl": "https://localhost:51138;http://localhost:51139"
+//    }
+//  }
+//}
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:21639",
+      "sslPort": 0
+    }
+  },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "UrgeTruck",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Kemar.GAS.Api": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "UrgeTruck",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://192.168.1.53:5000"
+    }
+  }
+}

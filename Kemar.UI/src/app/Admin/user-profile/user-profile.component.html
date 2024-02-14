@@ -1,0 +1,342 @@
+<p-toast position="bottom-right"></p-toast>
+<div class="main-content">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="title">Edit Profile</h5>
+        </div>
+        <div class="card-body">
+          <form>
+            <div class="row">
+              <div class="col-md-5 pr-1">
+                <div class="form-group">
+                  <label>Company </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    disabled=""
+                    placeholder="Company"
+                    value="Kemar Port Automation PVT.LTD"
+                  />
+                </div>
+              </div>
+              <div class="col-md-3 px-1">
+                <div class="form-group">
+                  <label>Username</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    value="{{ userDetails.userName }}"
+                    placeholder="Username"
+                  />
+                </div>
+              </div>
+              <div class="col-md-4 pl-1">
+                <div class="form-group">
+                  <label for="email">Email address</label>
+                  <input
+                    name="email"
+                    id="email"
+                    value="{{ userDetails.email }}"
+                    type="email"
+                    class="form-control"
+                    placeholder="Email"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 pr-1">
+                <div class="form-group">
+                  <label>First Name</label>
+                  <input
+                    type="text"
+                    value="{{ userDetails.firstName }}"
+                    class="form-control"
+                    placeholder="First Name"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 pl-1">
+                <div class="form-group">
+                  <label>Last Name</label>
+                  <input
+                  value="{{ userDetails.lastName }}"
+                    type="text"
+                    class="form-control"
+                    placeholder="Last Name"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 pr-1">
+                <div class="form-group">
+                  <label>Department</label>
+                  <input type="text" value="{{ userDetails.departmentName }}" class="form-control" placeholder="Department" />
+                </div>
+              </div>
+              <div class="col-md-4 px-1">
+                <div class="form-group">
+                  <label>Designation</label>
+                  <input
+                    type="text"
+                    value="{{ userDetails.designationName }}"
+                    class="form-control"
+                    placeholder="Designation"
+                  />
+                </div>
+              </div>
+              <div class="col-md-4 pl-1">
+                <div class="form-group">
+                  <label>Mobile Number</label>
+                  <input
+                    type="number"
+                    value="{{ userDetails.mobileNumber }}"
+                    class="form-control"
+                    placeholder="Mobile Number"
+                  />
+                </div>
+              </div>
+            </div>
+            <!-- <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label>About Me</label>
+                  <textarea
+                    rows="4"
+                    cols="80"
+                    class="form-control"
+                    placeholder="Here can be your description"
+                  ></textarea>
+                </div>
+              </div>
+            </div> -->
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card card-user">
+        <!-- <div class="image">
+          <img src="../../../assets/images/4159943_89782.jpg"  alt="...">
+        </div> -->
+        <div class="card-body">
+          <div class="author d-flex justify-content-center">
+            <img class="avatar border-gray" [src]="profileImageUrl" alt="..." />
+          </div>
+          <div class="d-flex justify-content-center">
+            <h2 class="title">
+              {{ userDetails.firstName }} {{ userDetails.lastName }}
+            </h2>
+          </div>
+          <p class="description text-center">
+            {{ userDetails.departmentName }}
+            <br />
+            {{ userDetails.designationName }} <br />
+            {{ userDetails.email }}
+          </p>
+
+          <div class="d-flex row justify-content-between align-items-center mt-2">
+            <div class="col">
+              <button
+                (click)="open()"
+                class="btn btn-primary password-button"
+                rel="nofollow"
+                type="button"
+              >
+                Change Password
+              </button>
+            </div>
+
+            <div class="col">
+              <span class=""
+                ><input
+                  class="text-primary "
+                  type="file"
+                  accept="image/*"
+                  (change)="uploadImage($event)"
+              /></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+  header="Change Password"
+  [style]="{ width: '20vw' }"
+  [(visible)]="display"
+  [draggable]="false"
+  [keepInViewport]="true"
+  [modal]="true"
+  styleClass="dialogBox"
+>
+  <div class="container mt-2">
+    <div class="row">
+      <div class="col-md-12">
+        <form
+          autocomplete="off"
+          [formGroup]="changePasswordForm"
+          (keyup.enter)="onSubmit()"
+        >
+          <div class="form-group">
+            <div class="form-group">
+              <input
+                type="hidden"
+                class="form-control"
+                name="id"
+                id="id"
+                value="{{ model.userName }}"
+              />
+            </div>
+            <div class="form-group mt-2">
+              <div class="col-sm-12">
+                <label for="oldPassword"
+                  >Old Password <sup class="text-danger">*</sup></label
+                >
+                <br />
+                <input
+                  autocomplete="new-password"
+                  tabindex="0"
+                  type="password"
+                  formControlName="oldPassword"
+                  class="form-control form-edit"
+                  autofocus
+                  onpaste="return false;"
+                  ondrop="return false;"
+                  [ngClass]="{
+                    'is-invalid':
+                      editUserFormSubmitted && f1['oldPassword'].errors
+                  }"
+                  value=""
+                  id="oldPassword"
+                  name="oldPassword"
+                  [(ngModel)]="model.oldPassword"
+                />
+                <div
+                  *ngIf="editUserFormSubmitted && f1['oldPassword'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f1['oldPassword'].errors['required']">
+                    <small>Old Password is required</small>
+                  </div>
+                  <div *ngIf="f1['oldPassword'].errors['minlength']">
+                    <small>Old Password must be at least 5 characters</small>
+                  </div>
+                  <div *ngIf="f1['oldPassword'].errors['maxlength']">
+                    <small> Old Password must not exceed 15 characters</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group row mb-0 mt-2">
+              <div class="col-sm-12">
+                <label for="password"
+                  >Password <sup class="text-danger">*</sup></label
+                >
+                <br />
+                <input
+                  tabindex="1"
+                  type="password"
+                  formControlName="password"
+                  autocomplete="new-password"
+                  class="form-control form-edit"
+                  onpaste="return false;"
+                  ondrop="return false;"
+                  [ngClass]="{
+                    'is-invalid': editUserFormSubmitted && f1['password'].errors
+                  }"
+                  value=""
+                  id="password"
+                  name="password"
+                  [(ngModel)]="model.password"
+                />
+                <div
+                  *ngIf="editUserFormSubmitted && f1['password'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f1['password'].errors['required']">
+                    <small>Password is required</small>
+                  </div>
+                  <div *ngIf="f1['password'].errors['minlength']">
+                    <small>*Password must be at least 5 characters</small>
+                  </div>
+                  <div *ngIf="f1['password'].errors['maxlength']">
+                    <small>Password must not exceed 15 characters</small>
+                  </div>
+                  <div *ngIf="f1['password'].errors['pattern']">
+                    <small
+                      >Password must contain the following: upper case (A-Z),
+                      lower case (a-z), number (0-9) and special character (e.g.
+                      !@#$%^&*)</small
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group row mb-0 mt-2">
+              <div class="col-sm-12">
+                <label for="confirmPassword"
+                  >Confirm Password <sup class="text-danger">*</sup></label
+                >
+                <br />
+                <input
+                  tabindex="2"
+                  type="password"
+                  formControlName="confirmPassword"
+                  autocomplete="new-password"
+                  class="form-control form-edit"
+                  onpaste="return false;"
+                  ondrop="return false;"
+                  [ngClass]="{
+                    'is-invalid':
+                      editUserFormSubmitted && f1['confirmPassword'].errors
+                  }"
+                  value=""
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  [(ngModel)]="model.confirmPassword"
+                />
+                <div
+                  *ngIf="editUserFormSubmitted && f1['confirmPassword'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f1['confirmPassword'].errors['required']">
+                    <small>Confirm Password is required</small>
+                  </div>
+                  <div *ngIf="f1['confirmPassword'].errors['minlength']">
+                    <small
+                      >Confirm Password must be at least 5 characters</small
+                    >
+                  </div>
+                  <div *ngIf="f1['confirmPassword'].errors['maxlength']">
+                    <small
+                      >Confirm Password must not exceed 15 characters</small
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="container model-footer">
+    <button tabindex="3" class="btn btn-primary m-2" (click)="onSubmit()">
+      Save
+    </button>
+    <button
+      tabindex="4"
+      class="btn btn-secondary m-2"
+      (click)="display = false"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>

@@ -1,0 +1,324 @@
+<p-toast position="bottom-right"></p-toast>
+
+<div class="mb-3">
+  <!-- <p-table [value]="deptMaster" [(selection)]="deptMaster" dataKey="filter" [paginator]="true" [rows]="pageSize" [showCurrentPageReport]="true"
+  currentPageReportTemplate="Total Records: {{totalRecords}}" [totalRecords]="totalRecords" 
+  (onPage)="pagechange($event)" [lazy]="true" responsiveLayout="scroll" styleClass="p-datatable-gridlines" [rowsPerPageOptions]="[15,30,50]"> -->
+  <mat-card>
+    <mat-card-content>
+      <p-table
+        #dt2
+        [value]="deptMaster"
+        [(selection)]="deptMaster"
+        selectionMode="single"
+        dataKey="filter"
+        styleClass="p-datatable-gridlines"
+        responsiveLayout="scroll"
+        [rows]="pageSize"
+        [lazy]="true"
+        [totalRecords]="totalRecords"
+        [paginator]="true"
+        currentPageReportTemplate="Total Records: {{ totalRecords }}"
+        [showCurrentPageReport]="true"
+        (onPage)="pagechange($event)"
+      >
+        <ng-template pTemplate="caption">
+          <!-- <div class="row filterClass">
+        <div class="col-2 text-start">
+          <span class="p-float-label">
+            <input
+              id="float-input"
+              type="text"
+              pInputText
+              [(ngModel)]="filterDepartmentList"
+              id="filter"
+              (keyup)="searchDeptWithPagination(1)"
+              placeholder="Department Name"
+              style="font-size: 13px"
+            />
+          </span>
+        </div>
+        <div class="col-10 text-end">
+          <a
+            class="btn btn-primary"
+            pTooltip="Add Department"
+            tooltipPosition="left"
+            (click)="open()"
+            style="font-size: 0.8rem"
+            ><i class="sidenav-link-icon pi pi-plus"></i
+          ></a>
+        </div>
+      </div> -->
+          <div class="d-flex justify-content-end">
+            <span class="p-input-icon-left p-ml-auto">
+              <!-- <i class="pi pi-search"></i> -->
+              <!-- <input class="form-control-search" pInputText type="text" (input)="dt2.filterGlobal($any($event.target).value, 'contains')" placeholder="Search" /> -->
+              <input
+                type=""
+                class="form-control form-control-search mr-auto form-control-alternative"
+                pInputText
+                [(ngModel)]="filterDepartmentList"
+                type="text"
+                (keyup)="searchDeptWithPagination(1)"
+                (input)="
+                  dt2.filterGlobal($any($event.target).value, 'contains')
+                "
+                placeholder="Search"
+              />
+            </span>
+            <div class="ml-1">
+              <a
+                class="btn btn-primary"
+                title="Add  Department"
+                tooltipPosition="top"
+                (click)="open()"
+                style="font-size: 0.8rem"
+                ><i class="sidenav-link-icon pi pi-plus"></i
+              ></a>
+            </div>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th>Sr. No</th>
+            <th class="column-left">Department Name</th>
+            <!-- <th pSortableColumn="departmentName" class="column-left">Department Name
+          <p-sortIcon field="departmentName"></p-sortIcon>
+        </th> -->
+            <th id="coordinating" class="column-left">
+              Co-ordinating Incharge
+            </th>
+            <th [width]="150" class="column-left">Status</th>
+            <th [width]="80" class="column-center">Action</th>
+          </tr>
+          <tr></tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-dept let-i="rowIndex">
+          <tr>
+            <td class="col-1">{{ i + 1 }}</td>
+            <td class="column-left">
+              <span class="p-column-title">Department Name</span>
+              <span class="image-text">{{ dept.departmentName }}</span>
+            </td>
+            <td class="column-left">
+              <span class="p-column-title">coordinating Incharge Name</span>
+              <span class="image-text">{{
+                dept.coordinatingInchargeName
+              }}</span>
+            </td>
+            <td class="column-left">
+              <span class="p-column-title">isActive</span>
+              <span *ngIf="dept.isActive == true">Active</span>
+              <span *ngIf="dept.isActive == false">Inactive</span>
+              <!-- <span class="image-text">{{role.isActive}}</span> -->
+            </td>
+            <td class="text-primary text-center">
+              <i
+                class="editIcon fa fa-edit"
+                pTooltip="Edit"
+                tooltipPosition="top"
+                (click)="editDept(dept)"
+              ></i>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td class="column-center" colspan="40">No Data found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </mat-card-content>
+  </mat-card>
+  <!-- <div class="row ">
+        <div class="col-sm-6 mt-3">
+          Item per page
+          <select (change)="Search()" [(ngModel)]="pageSize" class="paginationcount">
+            <option value="15">15</option>
+            <option value="30">30</option>
+            <option value="50">50</option>
+          </select> &nbsp;
+          <span> Total Records : {{totalRecords}} </span>
+        </div>
+        <div class="col-sm-6 text-end">
+          <div class="pagination justify-content-end">
+            <p-paginator [rows]="pageSize" [totalRecords]="totalRecords" (onPageChange)="getAllDeptWithPagination(currentPage = $event.page+1)" ></p-paginator>
+          </div>
+        </div>
+      </div> -->
+</div>
+
+<p-dialog
+  header="{{ title }}"
+  [(visible)]="display"
+  [draggable]="false"
+  [keepInViewport]="true"
+  [modal]="true"
+  styleClass="dialogBox"
+>
+  <div class="container mt-2">
+    <div class="row">
+      <div class="col-md-12">
+        <form
+          autocomplete="off"
+          [formGroup]="deptform"
+          (keyup.enter)="registerDepartment()"
+        >
+          <div class="form-group">
+            <div class="form-group row mb-0">
+              <div class="col-12">
+                <label for="departmentName" class="top-input"
+                  >Department Name <sup class="text-danger">*</sup></label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="departmentName"
+                  id="departmentName"
+                  name="departmentName"
+                  placeholder=" "
+                  autocomplete=""
+                  [ngClass]="{
+                    'is-invalid': submitted && f['departmentName'].errors
+                  }"
+                  autofocus
+                />
+                <div
+                  *ngIf="submitted && f['departmentName'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['departmentName'].errors['required']">
+                    <small> Department Name is required </small>
+                  </div>
+                  <div
+                    *ngIf="
+                      f['departmentName'].hasError('whitespace') &&
+                      !f['departmentName'].errors['required']
+                    "
+                  >
+                    <small>Blank space not allowed</small>
+                  </div>
+                  <div
+                    *ngIf="
+                      f['departmentName'].errors['minlength'] &&
+                      !f['departmentName'].hasError('whitespace')
+                    "
+                  >
+                    <small>
+                      Department Name must be at least 2 characters</small
+                    >
+                  </div>
+                  <div
+                    *ngIf="
+                      f['departmentName'].errors['maxlength'] &&
+                      !f['departmentName'].errors['minlength'] &&
+                      !f['departmentName'].hasError('whitespace')
+                    "
+                  >
+                    <small>Department Name must not exceed 50 characters</small>
+                  </div>
+                  <!-- <div *ngIf="f['departmentName'].errors['minlength']">
+                    <small>
+                      Department Name must be at least 2 characters
+                    </small>
+                  </div> -->
+                  <!-- <div *ngIf="f['departmentName'].errors['maxlength']">
+                    <small>
+                      Department Name must not exceed 50 characters
+                    </small>
+                  </div>
+                  <div *ngIf="f['departmentName'].errors['whitespace']">
+                    <small>
+                      Blank space not allowed
+                    </small>
+                    </div> -->
+                  <!-- <div *ngIf="f['departmentName'].errors['noWhitespaceValidator']">
+                    Department name should contain only a-z,A-Z
+                  </div> -->
+                  <!-- <div *ngIf="f['departmentName'].errors?.['whitespace']">
+                    <small>
+                      Space is not allowed
+                    </small>
+                  </div> -->
+                </div>
+              </div>
+              <div class="col-12 my-2">
+                <label for="coordinatingIncharge">Coordination Incharge</label>
+                <br />
+                <select
+                  name="coordinatingIncharge"
+                  class="form-control form-select"
+                  formControlName="coordinatingIncharge"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['coordinatingIncharge'].errors
+                  }"
+                  placeholder="--Choose Option--"
+                  (change)="Inchargeselection()"
+                >
+                  <option value="0" disabled>--Choose Option--</option>
+                  <option
+                    *ngFor="let user of activeUserManager"
+                    [ngValue]="user.id"
+                  >
+                    {{ user.firstName }} {{ user.lastName }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="submitted && f['coordinatingIncharge'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['coordinatingIncharge'].errors['required']">
+                    <small> Reporting User is required</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group row mb-0 mt-2" [hidden]="Save == 'Add'">
+              <div class="col-12">
+                <label for="isActive" class="radio-btn mr-1">Active</label>
+                <label class="form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    [value]="true"
+                    formControlName="isActive"
+                  />
+                </label>
+                <label for="isActive" class="radio-btn mr-1">Inactive</label>
+                <label class="form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    [value]="false"
+                    formControlName="isActive"
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="container model-footer">
+    <button
+      class="btn btn-primary m-2"
+      tabindex="3"
+      (click)="registerDepartment()"
+    >
+      {{ Save }}
+    </button>
+    <button
+      *ngIf="Save == 'Add'"
+      tabindex="4"
+      class="btn btn-danger m-2"
+      (click)="onReset()"
+    >
+      Reset
+    </button>
+    <button class="btn button m-2" tabindex="5" (click)="display = false">
+      Close
+    </button>
+  </div>
+</p-dialog>

@@ -1,0 +1,371 @@
+<p-toast position="bottom-right"></p-toast>
+
+
+
+<div class=" my-1">
+    <mat-card>
+        <mat-card-content>
+  <p-table
+    #dt2
+    [value]="AllMyTeamTaskData"
+    [(selection)]="AllMyTeamTaskData"
+    selectionMode="single"
+    dataKey="filter1"
+    styleClass="p-datatable-gridlines"
+    responsiveLayout="scroll"
+    [rows]="pageSize1"
+    [first]="skiprow1"
+    [totalRecords]="totalCountOfMyTeam"
+    [paginator]="true"
+    currentPageReportTemplate="Total Records: {{ totalCountOfMyTeam }}"
+   
+    [showCurrentPageReport]="true"
+    (onPage)="pagechange1($event)"
+  >
+    <ng-template pTemplate="caption">
+      <div class="row d-flex justify-content-between myTeamfilterClass mt-3" *ngIf="IsShowDDL2">
+        <div class="col " >
+          <span class="">
+            <input
+              id="float-input"
+              type="text"
+              pInputText
+              [(ngModel)]="filterMyTeamTask"
+              id="filter1"
+              (keyup.enter)="SearchForMyTeamTask()"
+              placeholder="Task Title"
+              style="font-size: 13px"
+            />
+          </span>
+        </div>
+        <div class="col " >
+          <span class="">
+            <p-dropdown
+              inputId="userName"
+              [autoDisplayFirst]="false"
+              [options]="GetAllAssignedBy"
+              [(ngModel)]="selectedUserBy"
+              optionLabel="userName"
+              optionValue="id"
+            ></p-dropdown>
+          
+          </span>
+        </div>
+        <div class="col " >
+          <span class="">
+            <p-dropdown
+              inputId="userName"
+              [autoDisplayFirst]="false"
+              [options]="GetAllAssignedTo"
+              [(ngModel)]="selectedUserTo"
+              optionLabel="userName"
+              optionValue="id"
+            ></p-dropdown>
+            
+          </span>
+        </div>
+        <div class="col ">
+          <span class="">
+            <p-dropdown
+              inputId="projectName"
+              [autoDisplayFirst]="false"
+              [options]="AllProjectMaster"
+              [(ngModel)]="selectedProject"
+              optionLabel="projectName"
+              optionValue="projectId"
+            ></p-dropdown>
+         
+          </span>
+        </div>
+        <div class="col " >
+          <span class="">
+            <p-dropdown
+              inputId="taskName"
+              [autoDisplayFirst]="false"
+              [options]="AllTaskTypeMaster"
+              [(ngModel)]="selectedTask"
+              optionLabel="taskName"
+              optionValue="taskId"
+            ></p-dropdown>
+           
+          </span>
+        </div>
+        <div class="col " >
+          <span class="">
+            <p-dropdown
+              inputId="status"
+              [autoDisplayFirst]="false"
+              [options]="AllStatus"
+              [(ngModel)]="selectedStatus"
+              optionLabel="key"
+              optionValue="status"
+            ></p-dropdown>
+          
+          </span>
+        </div>
+        <div class="col " >
+          <span class="">
+            <p-calendar
+              class=""
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              placeholder="dd/mm/yyyy"
+              [(ngModel)]="supportingInchargeFromDateFilter"
+              inputId="From"
+            >
+            </p-calendar>
+            <label class="mx-3" for="From"></label>
+          </span>
+        </div>
+        <div class="col " >
+          <span class="">
+            <p-calendar
+              dateFormat="dd/mm/yy"
+              [showButtonBar]="true"
+              placeholder="dd/mm/yyyy"
+              [(ngModel)]="supportingInchargeToDateFilter"
+              inputId="To"
+            >
+            </p-calendar>
+            <label class="mx-3" for="To"> </label>
+          </span>
+        </div>
+       
+      </div> 
+    <div class="row myTeamfilterClass">
+      <div class="d-flex justify-content-end " *ngIf="IsShowDDL2">
+        <button
+          class="btn btn-primary mx-2"
+          (click)="getTeamTaskTransactionWithPagination(1)"
+          matTooltip="Search"
+          matTooltipClass="danger-tooltip"
+          style="font-size: 0.8rem"
+        >
+          <fa-icon [icon]="faSearch"></fa-icon>
+        </button>
+        <button
+          class="btn btn-primary mx-2"
+          (click)="OnResetDDL_Tab2()"
+          matTooltip="Search"
+          matTooltipClass="danger-tooltip"
+          style="font-size: 0.8rem"
+        >
+          Reset
+        </button>
+        <button
+          class="btn btn-primary mx-2"
+          pTooltip="Close Filter"
+          tooltipPosition="top"
+          style="font-size: 0.8rem"
+          matTooltipClass="danger-tooltip"
+          (click)="CloseFilter_Tab2()"
+        >
+          <fa-icon [icon]="faTimes"></fa-icon>
+        </button>
+      </div>
+        <div class="col-12 text-end" *ngIf="isShowFilter2">
+          <button
+            class="btn btn-primary mx-2"
+            (click)="onFilterTab2()"
+            matTooltip="filter"
+            matTooltipClass="danger-tooltip"
+            style="font-size: 0.8rem"
+          >
+            Filter
+          </button>
+
+          <button
+            class="btn btn-primary mx-2"
+            (click)="DownloadTeamTaskTransaction()"
+            matTooltip="Search"
+            matTooltipClass="danger-tooltip"
+            style="font-size: 0.8rem"
+          >
+            <fa-icon [icon]="faDownload"></fa-icon>
+          </button>
+        </div>
+      </div> 
+
+
+      <!-- <div class="d-flex filter_data p-0">
+        <div class="d-flex newDeskfilterClass mt-4" >
+          <div class="col-5 ">
+            <span class="">
+              <input
+                id="float-input"
+                type="text"
+                pInputText
+              
+                id="filter"
+              
+                placeholder="Task Title"
+              />
+            </span>
+          </div>
+         
+      
+       
+          <div class="col-1 text-end d-flex align-items-center">
+            <button
+              class="btn btn-primary"
+             
+              matTooltip="Search"
+              matTooltipClass="danger-tooltip"
+            >
+              <fa-icon [icon]="faSearch"></fa-icon>
+            </button>
+            <button
+              class="btn btn-light"
+            
+              matTooltip="Search"
+              matTooltipClass="danger-tooltip"
+            >
+              Clear
+            </button>
+            <button
+              class="btn btn-danger"
+              pTooltip="Close Filter"
+              tooltipPosition="top"
+              matTooltipClass="danger-tooltip"
+            
+            >
+              <fa-icon [icon]="faTimes"></fa-icon>
+            </button>
+          </div>
+        </div>
+        <div
+          class="d-flex align-items-center justify-content-end filter-btn mt-1"
+        >
+          <button
+            class="btn btn-primary"
+          
+            matTooltip="filter"
+            matTooltipClass="danger-tooltip"
+          >
+            Filter
+          </button>
+          <button
+            class="btn btn-success"
+            pTooltip="Add Task"
+            tooltipPosition="left"
+           
+          >
+            <i class="sidenav-link-icon pi pi-plus"></i>
+          </button>
+        </div>
+      </div> -->
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Sr. No</th>
+        <th class="column-left">Task Title</th>
+        <th class="column-left">Project</th>
+        <th class="column-left">Department</th>
+        <th class="column-left">Task Type</th>
+        <th class="column-left">Description</th>
+        <th class="column-left">Priority</th>
+        <th class="column-left">Assigned By</th>
+        <th class="column-left">Assigned To</th>
+        <th class="column-center">Assigned Date</th>
+        <th class="column-center">Excepted Timeline</th>
+        <!-- <th pSortableColumn="exceptedEndDate" class="column-center">Excepted End Date
+            </th> -->
+        <th class="column-center">Actual Timeline</th>
+        <!-- <th pSortableColumn="actualEndDate" class="column-center">Actual End Date
+            </th> -->
+      </tr>
+      <tr></tr>
+    </ng-template>
+    <ng-template
+      pTemplate="body"
+      let-editing="editing"
+      let-task
+      let-i="rowIndex"
+    >
+      <tr
+        [pEditableRow]="task"
+        [ngClass]="{ overdueTask: task.status == 'Overdue' }"
+      >
+        <td class="text-center">
+          {{ i + 1 + pageSize1 * (currentPage1 - 1) }}
+        </td>
+        <td class="column-left">
+          <span class="image-text">{{ task.title }}</span>
+        </td>
+        <td class="column-left">
+          <span class="image-text">{{ task.projectMaster?.projectName }}</span>
+        </td>
+        <td class="column-left">
+          <span class="image-text">{{
+            task.departmentMaster?.departmentName
+          }}</span>
+        </td>
+        <td class="column-left">
+          <span class="image-text">{{ task.taskTypeMaster?.taskName }}</span>
+        </td>
+        <!-- <td class="column-left"><span class="image-text">{{task.description}}</span></td> -->
+        <td
+          class="column-left"
+          pTooltip="{{ task.description }}"
+          tooltipPosition="top"
+        >
+          <span class="image-text">
+            {{
+              task.description.length > 20
+                ? (task.description | slice : 0 : 20) + ".."
+                : task.description
+            }}</span
+          >
+        </td>
+        <td class="column-left">
+          <span class="p-column-title">priority</span>
+          <span class="image-text" *ngIf="task.priority == 1">High</span>
+          <span class="image-text" *ngIf="task.priority == 2">Medium</span>
+          <span class="image-text" *ngIf="task.priority == 3">Low</span>
+        </td>
+        <td class="column-left">
+          <span class="image-text">{{ task.assignedBy }}</span>
+        </td>
+        <td class="column-left">
+          <span class="image-text">{{ task.userManager?.userName }}</span>
+        </td>
+        <td class="column-center">
+          <span class="image-text">{{
+            task.assignedDate | date : "dd-MMM-yyyy HH:mm"
+          }}</span>
+        </td>
+        <td class="column-center">
+          <span class="image-text"
+            >{{ task.exceptedStartDate | date : "dd-MM-yyyy HH:mm" }} -
+            {{ task.exceptedEndDate | date : "dd-MM-yyyy HH:mm" }}</span
+          >
+        </td>
+        <td class="column-center">
+          <span class="image-text"
+            >{{ task.actualStartDate | date : "dd-MM-yyyy HH:mm" }} -
+            {{ task.actualEndDate | date : "dd-MM-yyyy HH:mm" }}</span
+          >
+        </td>
+
+        <!-- <td class="text-primary text-center" pTooltip="Action" tooltipPosition="top">
+
+              <div class="nav-item dropdown d-inline " ngbDropdown>
+                <a class="nav-link dropdown-toggle d-inline" id="navbarScrollingDropdown" role="button"
+                  data-bs-toggle="dropdown " aria-expanded="false" ngbDropdownToggle>
+                  <i class="editIcon fa fa-ellipsis-v" style="cursor: pointer;"></i>
+                </a>
+              </div>
+
+            </td> -->
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td class="column-center" colspan="40">No Task found.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+        </mat-card-content>
+    </mat-card>
+</div>

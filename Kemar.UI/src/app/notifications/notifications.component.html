@@ -1,0 +1,77 @@
+
+<div>
+  <h1
+    name="viewNotification"
+    content="width=device-width, initial-scale=1"
+  ></h1>
+
+
+    <div class="text-end" *ngIf="notification?.length != 0">
+      <a class="m-2 btn btn-danger" (click)="closeAllNotification()"
+        >Clear All</a
+      >
+    </div>
+    <div class="container-fluid" *ngFor="let item of notification">
+      <div
+        class="alert alert-warning alert-dismissible fade show animate__animated animate__backInLeft"
+        role="alert"
+        [ngClass]="{
+          'alert-info':
+            item.title == 'Uncomming Task' ||
+            item.title == 'New Task' ||
+            item.title == 'Task Reopened' ||
+            item.title == 'New Task Reassign' ||
+            item.title == 'New Task Transfer Requested' ||
+            item.title == 'Task Reassign',
+          'alert-warning': item.title == 'Task To Near deadline',
+          'alert-danger': item.title == 'Delegated Task Rejected',
+          'alert-success':
+            item.title == 'Delegated Task Accepted' ||
+            item.title == 'Task Completed'
+        }"
+      >
+        <figure class="figure d-inline-flex">
+          <i
+            class="titleIcon fa float-start mb-4"
+            [ngClass]="{
+              'fa-info-circle':
+                item.title == 'Uncomming Task' ||
+                item.title == 'Task Reopened' ||
+                item.title == 'Task Completed' ||
+                item.title == 'New Task' ||
+                item.title == 'Task Reassign' ||
+                item.title == 'Delegated Task Accepted' ||
+                item.title == 'New Task Transfer Requested' ||
+                item.title == 'New Task Reassign',
+              'fa-exclamation-triangle': item.title == 'Task To Near deadline',
+              'fa-exclamation-circle': item.title == 'Delegated Task Rejected'
+            }"
+            aria-hidden="true"
+          ></i>
+          <figcaption class="figure-caption ps-3 mb-0">
+            <h6>{{ item.title }}</h6>
+            <small>{{ item.createdDate | date : "dd-MM-yyyy hh:mm:ss" }}</small>
+            <p class="">{{ item.message }}</p>
+          </figcaption>
+        </figure>
+        <span
+          type="button"
+          class="closebtn float-end"
+          (click)="closeNotification(item.notificationId)"
+          onclick="this.parentElement.style.display='none';"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </span>
+      </div>
+    </div>
+
+    <div
+      class="container text-primary text-center mt-5"
+      *ngIf="notification?.length == 0"
+    >
+      <h1>No Notification.</h1>
+    </div>
+
+</div>

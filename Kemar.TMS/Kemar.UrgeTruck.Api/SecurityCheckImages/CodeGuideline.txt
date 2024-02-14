@@ -1,0 +1,34 @@
+coding guideline 
+--------------------------
+relationship
+1. Parent entity: 
+- In parent entity constructor intialize all childe object
+eg:
+public class GateMaster()
+{
+  LaneMaster = new List<LaneMaster>();
+}
+
+public virtual ICollection<LaneMaster> LaneMaster {get;set;}
+
+2. Chilte entity:
+
+public virtual GateMaster GateMaster {get;set;} // parent navigation property
+
+3. child EntityConfiguration mapping:
+ builde.hasOne(x=>x.GateMaster) // navigation property of parent in child entity
+       .WithMany(x=>x.LaneMaster) // virtual property defined in parent entity
+       .hasForeignKey(x=>x.GateId)
+       .IsRequred(true);
+------------------------------------ DB configuration --------------
+1. Device Mapping
+-- In Device mapping add "DeviceMappingType" value to either Trigger, PC. user Trigger - for IP camera, and Device for PC - lane pc
+
+3. Setting ingate image folder to display images on gate operator screen:
+- Store all files in the location mentioned in appsetting file
+- Create a sub folder at this location with container no or any unique name
+- store images in this folder and also remember to do same double check with postmand and image transaction table. 
+- ensure your file type is JPEG and you store it as JPG in database
+
+------------------------ Shift Master ----------
+1. Enter startTime and endtime with proper date and time like "MM/dd/yyyy hh:mm tt"

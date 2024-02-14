@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Common\**" />
+    <Compile Remove="Kemar.UrgeTruck.Api\**" />
+    <EmbeddedResource Remove="Common\**" />
+    <EmbeddedResource Remove="Kemar.UrgeTruck.Api\**" />
+    <None Remove="Common\**" />
+    <None Remove="Kemar.UrgeTruck.Api\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Context\SqliteDataContext.cs" />
+    <Compile Remove="EntityConfiguration\LocactionGroupMasterConfiguration.cs" />
+    <Compile Remove="EntityConfiguration\LocationMasterConfiguration.cs" />
+    <Compile Remove="EntityConfiguration\LocationTypeMasterConfiguration.cs" />
+    <Compile Remove="Interface\IGroupRegistration.cs" />
+    <Compile Remove="Interface\ILocationTypeRegistration.cs" />
+    <Compile Remove="Repositories\GroupRegistrationRepository.cs" />
+    <Compile Remove="Repositories\LocationRegistrationRepository.cs" />
+    <Compile Remove="Repositories\LocationTypeRegistrationRepository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kemar.UrgeTruck.Domain\Kemar.TMS.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.13">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.13">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.12.2" />
+  </ItemGroup>
+
+</Project>

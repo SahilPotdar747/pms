@@ -1,0 +1,1176 @@
+<div class="user_registration mb-3">
+  <mat-card>
+    <mat-card-content>
+      <p-table
+        #dt2
+        [value]="activeUserManager"
+        [(selection)]="userManager"
+        selectionMode="multiple"
+        dataKey="filter"
+        (onLazyLoad)="loadData($event)"
+        styleClass="p-datatable-customers"
+        responsiveLayout="scroll"
+        [rows]="10"
+        [paginator]="true"
+        [globalFilterFields]="[
+          'userName',
+
+          'firstName',
+
+          'lastName',
+
+          'email',
+
+          'mobileNumber',
+
+          'role'
+        ]"
+      >
+        <!-- multiple -->
+
+        <ng-template pTemplate="caption">
+          <div class="d-flex justify-content-end">
+            <span class="p-input-icon-left p-ml-auto">
+              <!-- <i class="pi pi-search"></i> -->
+
+              <!-- <input class="form-control-search" pInputText type="text" (input)="dt2.filterGlobal($any($event.target).value, 'contains')" placeholder="Search" /> -->
+
+              <input
+                type=""
+                class="form-control form-control-search mr-auto form-control-alternative"
+                pInputText
+                type="text"
+                (input)="
+                  dt2.filterGlobal($any($event.target).value, 'contains')
+                "
+                placeholder="Search"
+              />
+            </span>
+
+            <div class="ml-1">
+              <a
+                class="btn btn-primary m-0"
+                (click)="open()"
+                title="Add New user"
+                tooltipPosition="left"
+                style="font-size: 0.8rem"
+                ><i class="sidenav-link-icon pi pi-plus"></i
+              ></a>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="column-center">Sr No.</th>
+
+            <th class="column-center" pSortableColumn="userName">User ID</th>
+
+            <th class="column-center" pSortableColumn="firstName">
+              First Name
+            </th>
+
+            <th class="column-center" pSortableColumn="lastName">Last Name</th>
+
+            <th class="column-center" pSortableColumn="email">Email</th>
+
+            <th pSortableColumn="mobileNumber" class="column-center">
+              Mobile No
+            </th>
+
+            <th pSortableColumn="role" class="column-center">Role</th>
+
+            <th class="column-center">Action</th>
+          </tr>
+
+          <tr></tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-filter let-i="rowIndex">
+          <tr>
+            <td class="column-center">{{ i + 1 }}</td>
+
+            <td class="column-center">
+              <span class="p-column-title">userName</span> {{ filter.userName }}
+            </td>
+
+            <td class="column-center">
+              <span class="p-column-title">firstName</span>
+
+              <span class="image-text">{{ filter.firstName }}</span>
+            </td>
+
+            <td class="column-center">
+              <span class="p-column-title">lastName</span>
+
+              <span class="image-text">{{ filter.lastName }}</span>
+            </td>
+
+            <td class="column-center">
+              <span class="p-column-title">email</span>
+
+              <span>{{ filter.email }}</span>
+            </td>
+
+            <td class="column-center">
+              <span class="p-column-title">mobileNumber</span>
+
+              <span class="image-text">{{ filter.mobileNumber }}</span>
+            </td>
+
+            <td class="column-center">
+              <span class="p-column-title">role</span>
+
+              <span class="image-text">{{ filter.role }}</span>
+            </td>
+
+            <td class="text-primary column-center" title="Edit">
+              <i
+                class="editIcon fa fa-key"
+                style="cursor: pointer"
+                (click)="openChangePassword(filter)"
+              ></i
+              >&nbsp;
+
+              <i
+                class="editIcon fa fa-edit"
+                style="cursor: pointer"
+                (click)="editUser(filter)"
+              ></i>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="40">No Data found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<p-dialog
+  header="Add User Registration"
+  [(visible)]="display"
+  [draggable]="false"
+  [style]="{ width: '30vw' }"
+  [resizable]="false"
+  [keepInViewport]="true"
+  [modal]="true"
+  styleClass="dialogBox"
+>
+ 
+  <div class="mt-2">
+    <div class="row">
+      <div class="col-md-12">
+        <form
+          autocomplete="off"
+          [formGroup]="form"
+          autocomplete="off"
+          (keydown)="keyDownFunction($event, true)"
+        >
+          <div class="form-group">
+            <div class="form-group row mb-0 mt-2">
+              <div class="col-sm-6">
+                <label for="firstName">First Name<sup>*</sup></label>
+
+                <input
+                  type="text"
+                  tabindex="0"
+                  class="form-control"
+                  placeholder=""
+                  formControlName="firstName"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['firstName'].errors
+                  }"
+                  value=""
+                  [(ngModel)]="userRegistration.firstName"
+                />
+
+                <div
+                  *ngIf="submitted && f['firstName'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['firstName'].errors['required']">
+                    <small> *First Name is required</small>
+                  </div>
+
+                  <div
+                    *ngIf="
+                      f['firstName'].errors['minlength'] &&
+                      !f['firstName'].hasError('whitespace')
+                    "
+                  >
+                    <small> *First Name must be at least 3 characters </small>
+                  </div>
+
+                  <div *ngIf="f['firstName'].errors['maxlength']">
+                    <small> *First name must not exceed 20 characters </small>
+                  </div>
+
+                  <div
+                    *ngIf="
+                      f['firstName'].hasError('pattern') &&
+                      !f['firstName'].hasError('whitespace')
+                    "
+                  >
+                    <small>
+                      <sup>*</sup>First name should contain only a-z,A-Z.</small
+                    >
+                  </div>
+
+                  <div
+                    *ngIf="
+                      f['firstName'].hasError('whitespace') &&
+                      !f['firstName'].errors['required']
+                    "
+                  >
+                    <small>*No Blank Space Allowed </small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-6">
+                <label for="lastName">Last Name<sup>*</sup></label>
+
+                <br />
+
+                <input
+                  type="text"
+                  tabindex="1"
+                  class="form-control"
+                  placeholder=""
+                  value=" "
+                  formControlName="lastName"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['lastName'].errors
+                  }"
+                  [(ngModel)]="userRegistration.lastName"
+                />
+
+                <div
+                  *ngIf="submitted && f['lastName'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['lastName'].errors['required']">
+                    <small> *Last Name is required</small>
+                  </div>
+
+                  <div
+                    *ngIf="
+                      f['lastName'].errors['minlength'] &&
+                      !f['lastName'].hasError('whitespace')
+                    "
+                  >
+                    <small> *Last Name must be at least 3 characters </small>
+                  </div>
+
+                  <div *ngIf="f['lastName'].errors['maxlength']">
+                    <small> *Last name must not exceed 20 characters </small>
+                  </div>
+
+                  <div
+                    *ngIf="
+                      f['lastName'].hasError('pattern') &&
+                      !f['lastName'].hasError('whitespace')
+                    "
+                  >
+                    <small>
+                      <sup>*</sup>Last name should contain only a-z,A-Z.</small
+                    >
+                  </div>
+
+                  <div
+                    *ngIf="
+                      f['lastName'].hasError('whitespace') &&
+                      !f['lastName'].errors['required']
+                    "
+                  >
+                    <small>*No Blank Space Allowed </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group row mb-0 mt-2">
+              <div class="col-sm-6">
+                <label for="userName">User Name<sup>*</sup></label>
+
+                <br />
+
+                <input
+                  type="text"
+                  tabindex="2"
+                  formControlName="userName"
+                  class="form-control"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['userName'].errors
+                  }"
+                  value=""
+                  [(ngModel)]="userRegistration.userName"
+                />
+
+                <!-- <div
+
+                  *ngIf="submitted && f['userName'].errors"
+
+                  class="invalid-feedback"
+
+                >
+
+                  <div *ngIf="f['userName'].errors['required']">
+
+                    <small>*User Name is required</small>
+
+                  </div>
+
+                  <div *ngIf="f['userName'].errors['minlength']">
+
+                    <small> *User Name must be at least 5 characters</small>
+
+                  </div>
+
+                  <div *ngIf="f['userName'].errors['maxlength']">
+
+                    <small> *User Name must not exceed 20 characters</small>
+
+                  </div>
+
+                </div> -->
+
+                <div
+                  *ngIf="submitted && f['userName'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['userName'].errors['required']">
+                    <small> *User Name is required</small>
+                  </div>
+
+                  <div
+                    *ngIf="
+                      f['userName'].errors['minlength'] &&
+                      !f['userName'].hasError('whitespace')
+                    "
+                  >
+                    <small> *User Name must be at least 5 characters </small>
+
+                    <small> *User Name must be at least 3 characters </small>
+                  </div>
+
+                  <div *ngIf="f['userName'].errors['maxlength']">
+                    <small> *User name must not exceed 20 characters </small>
+                  </div>
+
+                  <div
+                    *ngIf="
+                      f['userName'].hasError('pattern') &&
+                      !f['userName'].hasError('whitespace')
+                    "
+                  >
+                    <small>
+                      <sup>*</sup>User name should contain only a-z,A-Z.</small
+                    >
+                  </div>
+
+                  <div
+                    *ngIf="
+                      f['userName'].hasError('whitespace') &&
+                      !f['userName'].errors['required']
+                    "
+                  >
+                    <small>*No Blank Space Allowed </small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-6">
+                <label for="email">Email<sup>*</sup></label>
+
+                <br />
+
+                <input
+                  type="text"
+                  tabindex="3"
+                  formControlName="email"
+                  autocomplete="off"
+                  autocomplete="off"
+                  class="form-control"
+                  [ngClass]="{ 'is-invalid': submitted && f['email'].errors }"
+                  value=""
+                  [(ngModel)]="userRegistration.email"
+                />
+
+                <div
+                  *ngIf="submitted && f['email'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['email'].errors['required']">
+                    <small>*Email is required</small>
+                  </div>
+
+                  <div *ngIf="f['email'].errors['minlength']">
+                    <small> *Email must be at least 5 characters</small>
+                  </div>
+
+                  <div *ngIf="f['email'].errors['maxlength']">
+                    <small> *Email must not exceed 20 characters</small>
+                  </div>
+
+                  <div *ngIf="f['email'].errors['email']">
+                    <small>*Email address is invalid</small>
+                  </div>
+
+                  <!-- <div *ngIf="f['email'].errors['pattern']">
+
+                    <small>
+
+                      <sup>*</sup> Email must be at least 5 characters long</small
+
+                    >
+
+                  </div> -->
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group row mb-0 mt-2">
+              <div class="col-sm-6">
+                <label for="password">Password<sup>*</sup></label>
+
+                <br />
+
+                <input
+                  type="password"
+                  tabindex="4"
+                  formControlName="password"
+                  autocomplete="off"
+                  maxlength="25"
+                  class="form-control"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['password'].errors
+                  }"
+                  value=""
+                  [(ngModel)]="userRegistration.password"
+                />
+
+                <div
+                  *ngIf="submitted && f['password'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['password'].errors['required']">
+                    <small>*Password is required</small>
+                  </div>
+
+                  <div *ngIf="f['password'].errors['minlength']">
+                    <small>*Password must be at least 5 characters</small>
+                  </div>
+
+                  <div *ngIf="f['password'].errors['maxlength']">
+                    <small> *Password must not exceed 15 characters</small>
+                  </div>
+
+                  <div *ngIf="f['password'].errors['pattern']">
+                    <small>
+                      <sup>*</sup>Password must contain the following: upper
+                      case (A-Z), lower case (a-z), number (0-9) and special
+                      character (e.g. !@#$%^&*)</small
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-6">
+                <label for="confrmPass">Confirm Password<sup>*</sup></label>
+
+                <br />
+
+                <input
+                  type="password"
+                  tabindex="5"
+                  maxlength="25"
+                  formControlName="confirmPassword"
+                  class="form-control"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['confirmPassword'].errors
+                  }"
+                  value=""
+                  [(ngModel)]="userRegistration.confirmPassword"
+                />
+
+                <div
+                  *ngIf="submitted && f['confirmPassword'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['confirmPassword'].errors['required']">
+                    <small>*Confirm Password is required</small>
+                  </div>
+
+                  <div *ngIf="f['confirmPassword'].errors['mustMatch']">
+                    <small>*Passwords must match.</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group row mb-0 mt-2">
+              <div class="col-sm-6">
+                <label for="mobileNumber">Mobile Number<sup>*</sup></label>
+
+                <br />
+
+                <input
+                  type="text"
+                  formControlName="mobileNumber"
+                  class="form-control"
+                  [maxlength]="10"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['mobileNumber'].errors
+                  }"
+                  value=""
+                  [(ngModel)]="userRegistration.mobileNumber"
+                />
+
+                <div
+                  *ngIf="submitted && f['mobileNumber'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['mobileNumber'].errors['required']">
+                    <small>*Mobile Number is required</small>
+                  </div>
+
+                  <div *ngIf="f['mobileNumber'].errors['minlength']">
+                    <small>*Mobile Number must be at least 10 characters</small>
+                  </div>
+
+                  <div *ngIf="f['mobileNumber'].errors['maxlength']">
+                    <small> *Mobile Number must not exceed 11 characters</small>
+                  </div>
+
+                  <div *ngIf="f['mobileNumber'].hasError('pattern')">
+                    <small> <sup>*</sup>Mobile No should contain 0-9 </small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-6">
+                <label for="roleId">Select Role<sup>*</sup></label>
+
+                <br />
+
+                <select
+                  name="roleId"
+                  tabindex="7"
+                  [(ngModel)]="userRegistration.roleId"
+                  class="form-control role-select form-select"
+                  formControlName="roleId"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['roleId'].errors
+                  }"
+                >
+                  <option [ngValue]="null" selected disabled hidden>
+                    --Choose Option--
+                  </option>
+
+                  <option *ngFor="let role of roles" [ngValue]="role.roleId">
+                    {{ role.roleName }}
+                  </option>
+                </select>
+
+                <div
+                  *ngIf="submitted && f['roleId'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['roleId'].errors['required']">
+                    <small> *Role is required.</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="model-footer mt-2">
+    <button tabindex="8" class="btn btn-success m-2">Submit</button>
+
+    <button tabindex="9" class="btn btn-danger m-2" (click)="onReset()">
+      Reset
+    </button>
+
+    <button
+      tabindex="10"
+      class="btn btn-secondary m-2"
+      (click)="display = false"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Update User Data"
+  [(visible)]="display1"
+  [draggable]="false"
+  [keepInViewport]="true"
+  [style]="{ width: '30vw' }"
+  [modal]="true"
+  styleClass="dialogBox"
+>
+  <div class="container mt-2">
+    <div class="row">
+      <div class="col-md-12">
+        <form
+          autocomplete="off"
+          [formGroup]="editUserForm"
+          (keydown)="keyDownFunction($event, false)"
+        >
+          <div class="form-group">
+            <div class="form-group row mb-0 mt-2">
+              <div class="col-sm-6">
+                <label for="firstName"
+                  >First Name <sup class="text-danger">*</sup></label
+                >
+                <input
+                  type="text"
+                  tabindex="0"
+                  maxlength="20"
+                  class="form-control form-edit"
+                  id="firstName"
+                  name="firstName"
+                  placeholder=" "
+                  [(ngModel)]="user.firstName"
+                  autocomplete=""
+                  formControlName="firstName"
+                  [ngClass]="{
+                    'is-invalid':
+                      editUserFormSubmitted && f1['firstName'].errors
+                  }"
+                />
+                <div
+                  *ngIf="editUserFormSubmitted && f1['firstName'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f1['firstName'].errors['required']">
+                    <small>First Name is required</small>
+                  </div>
+                  <div *ngIf="f1['firstName'].errors['minlength']">
+                    <small>First Name must be at least 3 characters</small>
+                  </div>
+                  <div *ngIf="f1['firstName'].errors['maxlength']">
+                    <small>First Name must not exceed 20 characters</small>
+                  </div>
+                  <div *ngIf="f1['firstName'].errors['pattern']">
+                    <small>First Name must contain only a-zA-Z</small>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col-sm-6">
+                <label for="lastName"
+                  >Last Name <sup class="text-danger">*</sup></label
+                >
+                <input
+                  type="text"
+                  tabindex="1"
+                  maxlength="13"
+                  class="form-control form-edit"
+                  id="lastName"
+                  name="lastName"
+                  placeholder=" "
+                  [(ngModel)]="user.lastName"
+                  autocomplete=""
+                  formControlName="lastName"
+                  [ngClass]="{
+                    'is-invalid': editUserFormSubmitted && f1['lastName'].errors
+                  }"
+                />
+                <div
+                  *ngIf="editUserFormSubmitted && f1['lastName'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f1['lastName'].errors['required']">
+                    <small>Last Name is required</small>
+                  </div>
+                  <div *ngIf="f1['lastName'].errors['minlength']">
+                    <small>Last Name must be at least 3 characters</small>
+                  </div>
+                  <div *ngIf="f1['lastName'].errors['maxlength']">
+                    <small>Last Name must not exceed 20 characters</small>
+                  </div>
+                  <div *ngIf="f1['lastName'].errors['pattern']">
+                    <small>Last Name should contain only a-z,A-Z</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group row mb-0 mt-2">
+              <div class="col-sm-6">
+                <label for="email"
+                  >Email Address <sup class="text-danger">*</sup></label
+                >
+                <input
+                  type="text"
+                  tabindex="2"
+                  class="form-control form-edit"
+                  id="Email"
+                  name="Email"
+                  placeholder=" "
+                  [(ngModel)]="user.email"
+                  autocomplete=""
+                  formControlName="email"
+                  [ngClass]="{
+                    'is-invalid': editUserFormSubmitted && f1['email'].errors
+                  }"
+                />
+                <div
+                  *ngIf="editUserFormSubmitted && f1['email'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f1['email'].errors['required']">
+                    <small>Email is required</small>
+                  </div>
+                  <div *ngIf="f1['email'].errors['minlength']">
+                    <small>Email must be at least 3 characters</small>
+                  </div>
+                  <div *ngIf="f1['email'].errors['maxlength']">
+                    <small>Email must not exceed 50 characters</small>
+                  </div>
+                  <div *ngIf="f1['email'].errors['email']">
+                    <small>Email address is invalid</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="mobileNumber"
+                  >Mobile Number<sup class="text-danger">*</sup></label
+                >
+                <br />
+                <input
+                  type="text"
+                  tabindex="3"
+                  formControlName="mobileNumber"
+                  class="form-control"
+                  name="mobileNumber"
+                  id="mobileNumber"
+                  [ngClass]="{
+                    'is-invalid':
+                      editUserFormSubmitted && f1['mobileNumber'].errors
+                  }"
+                  value=""
+                  [(ngModel)]="user.mobileNumber"
+                />
+                <div
+                  *ngIf="editUserFormSubmitted && f1['mobileNumber'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f1['mobileNumber'].errors['required']">
+                    <small>Mobile Number is required</small>
+                  </div>
+                  <div *ngIf="f1['mobileNumber'].errors['minlength']">
+                    <small>Mobile Number must be at least 10 characters</small>
+                  </div>
+                  <div *ngIf="f1['mobileNumber'].errors['maxlength']">
+                    <small>Mobile Number must not exceed 12 characters</small>
+                  </div>
+                  <div *ngIf="f1['mobileNumber'].errors['pattern']">
+                    <small>Mobile No should contain 0-9</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="userName"
+                  >User Name <sup class="text-danger">*</sup></label
+                >
+                <br />
+                <input
+                  type="text"
+                  tabindex="4"
+                  formControlName="userName"
+                  class="form-control"
+                  value=""
+                  [(ngModel)]="user.userName"
+                  [ngClass]="{
+                    'is-invalid': editUserFormSubmitted && f1['userName'].errors
+                  }"
+                  readonly
+                />
+                <div
+                  *ngIf="editUserFormSubmitted && f1['userName'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f1['userName'].errors['required']">
+                    <small>User Name is required</small>
+                  </div>
+                  <div *ngIf="f1['userName'].errors['minlength']">
+                    <small>User Name must be at least 5 characters</small>
+                  </div>
+                  <div *ngIf="f1['userName'].errors['maxlength']">
+                    <small>User Name must not exceed 20 characters</small>
+                  </div>
+                  <div *ngIf="f1['userName'].errors['pattern']">
+                    <small>User name should contain only a-z,A-Z</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="dateOfBirth">Date Of Birth</label>
+                <br />
+                <input
+                  type="date"
+                  [max]="todayDate"
+                  tabindex="2"
+                  formControlName="dateOfBirth"
+                  class="form-control"
+                  value=""
+                  [(ngModel)]="user.dateOfBirth"
+                  onkeydown="return false"
+                />
+              </div>
+              <div class="col-sm-6">
+                <label for="empCode">Employee Code</label>
+                <br />
+                <input
+                  type="text"
+                  tabindex="3"
+                  formControlName="empCode"
+                  autocomplete="off"
+                  autocomplete="off"
+                  class="form-control"
+                  [ngClass]="{
+                    'is-invalid': editUserFormSubmitted && f1['empCode'].errors
+                  }"
+                  value=""
+                  [(ngModel)]="user.empCode"
+                />
+                <div
+                  *ngIf="editUserFormSubmitted && f1['empCode'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f1['empCode'].errors['minlength']">
+                    <small>Employee Code must be at least 3 characters</small>
+                  </div>
+                  <div *ngIf="f1['empCode'].errors['maxlength']">
+                    <small>Employee Code must not exceed 10 characters</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="roleId" class="form-group"
+                  >Select Role <sup class="text-danger">*</sup></label
+                >
+                <select
+                  name="roleId"
+                  id="roleId"
+                  [(ngModel)]="userRegistration.role"
+                  class="form-control form-select form-edit"
+                  formControlName="roleId"
+                  [ngClass]="{
+                    'is-invalid': editUserFormSubmitted && f1['roleId'].errors
+                  }"
+                >
+                  <option value="" disabled>--Choose Option--</option>
+                  <option *ngFor="let role of roles" [ngValue]="role.roleId">
+                    {{ role.roleName }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="editUserFormSubmitted && f1['roleId'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f1['roleId'].errors['required']">
+                    <small>Role is required</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="reportingUser"
+                  >Reporting User <sup class="text-danger">*</sup></label
+                >
+                <br />
+                <select
+                  name="reportingUser"
+                  id="reportingUser"
+                  tabindex="7"
+                  [(ngModel)]="userRegistration.reportingUser"
+                  class="form-control role-select form-select"
+                  formControlName="reportingUser"
+                  [ngClass]="{
+                    'is-invalid': submitted && f1['reportingUser'].errors
+                  }"
+                  placeholder="--Choose Option--"
+                >
+                  <option value="" disabled>--Choose Option--</option>
+                  <option
+                    *ngFor="let user of activeUserManager"
+                    [ngValue]="user.id"
+                  >
+                    {{ user.userName }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="submitted && f1['reportingUser'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f1['reportingUser'].errors['required']">
+                    <small>Reporting User is required</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="departmentId"
+                  >Department Name <sup class="text-danger">*</sup></label
+                >
+                <br />
+                <select
+                  name="departmentId"
+                  id="departmentId"
+                  tabindex="7"
+                  [(ngModel)]="userRegistration.departmentId"
+                  class="form-control role-select form-select"
+                  formControlName="departmentId"
+                  [ngClass]="{
+                    'is-invalid': submitted && f1['departmentId'].errors
+                  }"
+                  placeholder="--Choose Option--"
+                >
+                  <option value="" selected disabled>--Choose Option--</option>
+                  <option
+                    *ngFor="let dept of department"
+                    [ngValue]="dept.departmentId"
+                  >
+                    {{ dept.departmentName }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="submitted && f1['departmentId'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f1['departmentId'].errors['required']">
+                    <small>Department Name is required</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="designationId"
+                  >Designation Name <sup class="text-danger">*</sup></label
+                >
+                <br />
+                <select
+                  name="designationId"
+                  id="designationId"
+                  tabindex="7"
+                  [(ngModel)]="userRegistration.designationId"
+                  class="form-control role-select form-select"
+                  formControlName="designationId"
+                  [ngClass]="{
+                    'is-invalid': submitted && f1['designationId'].errors
+                  }"
+                  placeholder="--Choose Option--"
+                >
+                  <option value="" disabled>--Choose Option--</option>
+                  <option
+                    *ngFor="let design of designation"
+                    [ngValue]="design.designationId"
+                  >
+                    {{ design.designationName }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="submitted && f1['designationId'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f1['designationId'].errors['required']">
+                    <small>Designation Name is required</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="form-group row mb-0 mt-2">
+                  <div class="col-12">
+                    <label for="isactive" class="radio-btn mr-1">Active</label>
+                    <label class="form-check-inline"
+                      >&nbsp;
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        [value]="true"
+                        id="isactive"
+                        formControlName="isActive"
+                      />
+                    </label>
+                    <label for="isinactive" class="radio-btn mr-1"
+                      >Inactive</label
+                    >
+                    <label class="form-check-inline"
+                      >&nbsp;
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        [value]="false"
+                        id="isinactive"
+                        formControlName="isActive"
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="container model-footer">
+    <button tabindex="8" class="btn btn-primary m-2" (click)="updateUser()">
+      Save
+    </button>
+    <button
+      tabindex="9"
+      class="btn btn-secondary m-2"
+      (click)="display1 = false"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<p-dialog
+  [style]="{ width: '20vw' }"
+  header="Change Password"
+  [(visible)]="display2"
+  [draggable]="false"
+  [keepInViewport]="true"
+  [modal]="true"
+  styleClass="dialogBox"
+>
+  <div class="container mt-2">
+    <div class="row">
+      <div class="col-md-12">
+        <form
+          autocomplete="off"
+          [formGroup]="changePasswordForm"
+          (keydown)="keyDownFunction($event, false)"
+        >
+          <div class="form-group">
+            <div class="form-group">
+              <input
+                type="hidden"
+                class="form-control"
+                name="id"
+                id="id"
+                value="{{ model.userName }}"
+                formControlName="userName"
+                [(ngModel)]="model.userName"
+              />
+            </div>
+            <div class="form-group row mb-0 mt-2">
+              <div class="col-sm-12">
+                <label for="password">Password<sup>*</sup></label>
+                <br />
+                <input
+                  type="password"
+                  formControlName="password"
+                  autocomplete="new-password"
+                  class="form-control"
+                  [ngClass]="{
+                    'is-invalid': submitted && f2['password'].errors
+                  }"
+                  value=""
+                  id="password"
+                  name="password"
+                  [(ngModel)]="model.password"
+                  onpaste="return false;"
+                  ondrop="return false;"
+                />
+                <div
+                  *ngIf="submitted && f2['password'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f2['password'].errors['required']">
+                    <small>Password is required</small>
+                  </div>
+                  <div *ngIf="f2['password'].errors['minlength']">
+                    <small>Password must be at least 5 characters</small>
+                  </div>
+                  <div *ngIf="f2['password'].errors['maxlength']">
+                    <small>Password must not exceed 15 characters</small>
+                  </div>
+                  <div *ngIf="f2['password'].errors['pattern']">
+                    <small
+                      >Password must contain the following: upper case (A-Z),
+                      lower case (a-z), number (0-9) and special character (e.g.
+                      !@#$%^&*)</small
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group row mb-0 mt-2">
+              <div class="col-sm-12">
+                <label for="confirmPassword"
+                  >Confirm Password<sup>*</sup></label
+                >
+                <br />
+                <input
+                  type="password"
+                  formControlName="confirmPassword"
+                  autocomplete="new-password"
+                  class="form-control"
+                  [ngClass]="{
+                    'is-invalid': submitted && f2['confirmPassword'].errors
+                  }"
+                  value=""
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  [(ngModel)]="model.confirmPassword"
+                  onpaste="return false;"
+                  ondrop="return false;"
+                />
+                <div
+                  *ngIf="submitted && f2['confirmPassword'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f2['confirmPassword'].errors['required']">
+                    <small>Confirm Password is required</small>
+                  </div>
+                  <div *ngIf="f2['confirmPassword'].errors['minlength']">
+                    <small
+                      >Confirm Password must be at least 5 characters</small
+                    >
+                  </div>
+                  <div *ngIf="f2['confirmPassword'].errors['maxlength']">
+                    <small
+                      >Confirm Password must not exceed 15 characters</small
+                    >
+                  </div>
+                  <div *ngIf="f2['confirmPassword'].errors['mustMatch']">
+                    <small>Passwords must match</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="container model-footer">
+    <button
+      tabindex="8"
+      class="btn btn-primary m-2"
+      (click)="changeUserPassword()"
+    >
+      Save
+    </button>
+    <button
+      tabindex="9"
+      class="btn btn-secondary m-2"
+      (click)="display2 = false"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>

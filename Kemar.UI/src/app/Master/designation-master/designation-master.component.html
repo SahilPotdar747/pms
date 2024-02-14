@@ -1,0 +1,279 @@
+<p-toast position="bottom-right"></p-toast>
+
+
+
+<div class=" mb-3">
+    <mat-card>
+        <mat-card-content>
+  <p-table
+    #dt2
+    [value]="designationMaster"
+    [(selection)]="designationMaster"
+    selectionMode="single"
+    dataKey="filter"
+    styleClass="p-datatable-gridlines"
+    responsiveLayout="scroll"
+    [rows]="pageSize"
+    [lazy]="true"
+    [totalRecords]="totalRecords"
+    [paginator]="true"
+    currentPageReportTemplate="Total Records: {{ totalRecords }}"
+   
+    [showCurrentPageReport]="true"
+    (onPage)="pagechange($event)"
+  >
+    <!-- <p-table #dt2 [value]="roleMaster" [(selection)]="roleMaster" selectionMode="multiple"
+        dataKey="filter" styleClass="p-datatable-gridlines" responsiveLayout="scroll" [rows]="10"
+        [paginator]="true" [globalFilterFields]="['DesignationName']"> -->
+    <!-- multiple -->
+    <ng-template pTemplate="caption">
+      <!-- <div class="row filterClass">
+        <div class="col-2 text-start">
+          <span class="p-float-label">
+            <input
+              id="float-input"
+              type="text"
+              pInputText
+              [(ngModel)]="filterDesignationList"
+              id="filter"
+              (keyup)="searchDesignWithPagination(1)"
+              placeholder="Designation Name"
+              style="font-size: 13px"
+            />
+          </span>
+        </div>
+        <div class="col-10 text-end">
+          <a
+            class="btn btn-primary"
+            pTooltip="Add Designation"
+            tooltipPosition="left"
+            (click)="open()"
+            style="font-size: 0.8rem"
+            ><i class="sidenav-link-icon pi pi-plus"></i
+          ></a>
+        </div>
+      </div> -->
+      <div class="d-flex justify-content-end">
+        <span class="p-input-icon-left p-ml-auto">
+          <!-- <i class="pi pi-search"></i> -->
+          <!-- <input class="form-control-search" pInputText type="text" (input)="dt2.filterGlobal($any($event.target).value, 'contains')" placeholder="Search" /> -->
+          <input
+            type=""
+            class="form-control form-control-search mr-auto form-control-alternative"
+            pInputText
+            [(ngModel)]="filterDesignationList"
+            (keyup)="searchDesignWithPagination(1)"
+            type="text"
+            (input)="dt2.filterGlobal($any($event.target).value, 'contains')"
+            placeholder="Search"
+          />
+        </span>
+        <div class="ml-1">
+          <a
+            class="btn btn-primary"
+            title="Add New Filter"
+            tooltipPosition="top"
+            (click)="open()"
+            style="font-size: 0.8rem"
+            ><i class="sidenav-link-icon pi pi-plus"></i
+          ></a>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Sr. No</th>
+        <th class="column-left">Designation Name</th>
+        <th [width]="150" class="column-center">Status</th>
+        <th [width]="80" class="column-center">Action</th>
+      </tr>
+      <tr></tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-designation let-i="rowIndex">
+      <tr>
+        <td class="col-sm-1">{{ i + 1 }}</td>
+        <td class="column-left">
+          <span class="p-column-title">Designation Name</span>
+          <span class="image-text">{{ designation.designationName }}</span>
+        </td>
+        <td class="column-center">
+          <span class="p-column-title">isActive</span>
+          <span *ngIf="designation.isActive == true">Active</span>
+          <span *ngIf="designation.isActive == false">Inactive</span>
+          <!-- <span class="image-text">{{role.isActive}}</span> -->
+        </td>
+        <td
+          class="text-primary text-center"
+          pTooltip="Edit"
+          tooltipPosition="top"
+        >
+          <i
+            class="editIcon fa fa-edit"
+            (click)="editDesignation(designation)"
+          ></i>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td class="column-center" colspan="40">No Data found.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+        </mat-card-content>
+    </mat-card>
+  <!-- <div class="row ">
+        <div class="col-sm-6 mt-3">
+          Item per page
+          <select (change)="Search()" [(ngModel)]="pageSize" class="paginationcount">
+            <option value="15">15</option>
+            <option value="30">30</option>
+            <option value="50">50</option>
+          </select> &nbsp;
+          <span> Total Records : {{totalRecords}} </span>
+        </div>
+        <div class="col-sm-6 text-end">
+          <div class="pagination justify-content-end">
+            <p-paginator [rows]="pageSize" [totalRecords]="totalRecords" (onPageChange)="getAllDesignationWithPagination(currentPage = $event.page+1)" ></p-paginator>
+          </div>
+        </div>
+      </div> -->
+</div>
+
+<p-dialog
+  header="{{ title }}"
+  [(visible)]="display"
+  [draggable]="false"
+  [keepInViewport]="true"
+  [modal]="true"
+  styleClass="dialogBox"
+>
+  <div class="container mt-2">
+    <div class="row">
+      <div class="col-md-12">
+        <form
+          autocomplete="off"
+          [formGroup]="designationform"
+          (keyup.enter)="registerDesignation()"
+        >
+          <div class="form-group">
+            <div class="form-group row mb-0">
+              <div class="col-12">
+                <label for="designationName" class="top-input"
+                  >Designation Name <sup class="text-danger">*</sup></label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="designationName"
+                  id="designationName"
+                  name="designationName"
+                  placeholder=" "
+                  autocomplete=""
+                  [ngClass]="{
+                    'is-invalid': submitted && f['designationName'].errors
+                  }"
+                  autofocus
+                />
+                <div
+                  *ngIf="submitted && f['designationName'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['designationName'].errors['required']">
+                    <small>Designation Name is required</small>
+                  </div>
+                  <div
+                    *ngIf="
+                      f['designationName'].hasError('whitespace') &&
+                      !f['designationName'].errors['required']
+                    "
+                  >
+                    <small>Blank space not allowed</small>
+                  </div>
+                  <div
+                    *ngIf="
+                      f['designationName'].errors['minlength'] &&
+                      !f['designationName'].hasError('whitespace')
+                    "
+                  >
+                    <small>
+                      Designation Name must be at least 3 characters</small
+                    >
+                  </div>
+                  <div
+                    *ngIf="
+                      f['designationName'].errors['maxlength'] &&
+                      !f['designationName'].errors['minlength'] &&
+                      !f['designationName'].hasError('whitespace')
+                    "
+                  >
+                    <small
+                      >Designation Name must not exceed 50 characters</small
+                    >
+                  </div>
+                  <!-- <div *ngIf="f['designationName'].errors['minlength']">
+                    <small>
+                       Designation Name must be at least 3 characters
+                    </small>
+                  </div>
+                  <div *ngIf="f['designationName'].errors['maxlength']">
+                    <small>
+                       Designation Name must not exceed 50 characters
+                  </small>
+                  </div>
+                  <div *ngIf="f['designationName'].errors['pattern']">
+                    <small>
+                      Designation Name should contain only A-Za-z0-9()*%!_@./#&+:=-
+                    </small>
+                    </div> -->
+                  <!-- <div *ngIf="f['designationName'].errors['whitespace']">
+                      <small>
+                         Designation name should contain only aaaaaa
+                      </small>
+                      </div> -->
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group row mb-0 mt-2" [hidden]="Save == 'Add'">
+              <div class="col-12">
+                <label for="isActive" class="radio-btn mr-1">Active</label>
+                <label class="form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    [value]="true"
+                    formControlName="isActive"
+                  />
+                </label>
+                <label for="isActive" class="radio-btn mr-1">Inactive</label>
+                <label class="form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    [value]="false"
+                    formControlName="isActive"
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="container model-footer">
+    <button class="btn btn-primary m-2" (click)="registerDesignation()">
+      {{ Save }}
+    </button>
+    <button
+      *ngIf="Save == 'Add'"
+      tabindex="9"
+      class="btn btn-danger m-2"
+      (click)="onReset()"
+    >
+      Reset
+    </button>
+    <button class="btn button m-2" (click)="display = false">Close</button>
+  </div>
+</p-dialog>

@@ -1,0 +1,714 @@
+<p-toast position="bottom-right"></p-toast>
+
+<div class=" my-3">
+    <mat-card>
+        <mat-card-content>
+  <p-table
+    #dt1
+    [value]="unAssignTask"
+    [(selection)]="unAssignTask"
+    selectionMode="single"
+    dataKey="filter"
+    styleClass="p-datatable-gridlines"
+    responsiveLayout="scroll"
+    [rows]="pageSize"
+    [lazy]="true"
+    [totalRecords]="totalRecords"
+    [paginator]="true"
+    currentPageReportTemplate="Total {{ totalRecords }} records"
+  
+    [showCurrentPageReport]="true"
+    (onPage)="pagechange($event)"
+  >
+    <ng-template pTemplate="caption">
+      <!-- <div class="d-flex filter_data p-0">
+        <div class="d-flex newDeskfilterClass mt-4" *ngIf="IsShowDDL">
+          <div class="col-5 text-start">
+            <span class="p-float-label">
+              <input
+                id="float-input"
+                type="text"
+                pInputText
+                [(ngModel)]="filterMyTask"
+                id="filter"
+                (keyup.enter)="Search()"
+                placeholder="Task Title"
+              />
+            </span>
+          </div>
+          <div class="col-3 text-start">
+            <span class="p-float-label">
+              <p-dropdown
+                inputId="dropdown1"
+                [autoDisplayFirst]="false"
+                [options]="deptMaster"
+                [(ngModel)]="selectedDepartment"
+                optionLabel="departmentName"
+                optionValue="departmentId"
+              ></p-dropdown>
+              <label for="dropdown1">Department</label>
+            </span>
+         
+          </div>
+          <div class="col-3 text-start">
+            <span class="p-float-label">
+              <p-dropdown
+                inputId="dropdown1"
+                [autoDisplayFirst]="false"
+                [options]="AllProjectMaster"
+                [(ngModel)]="selectedProject"
+                optionLabel="projectName"
+                optionValue="projectId"
+              ></p-dropdown>
+              <label for="dropdown1">Project</label>
+            </span>
+           
+          </div>
+          <div class="col-3 text-start">
+            <span class="p-float-label">
+              <p-dropdown
+                inputId="dropdown1"
+                [autoDisplayFirst]="false"
+                [options]="AllTaskTypeMaster"
+                [(ngModel)]="selectedTaskType"
+                optionLabel="taskName"
+                optionValue="taskId"
+              ></p-dropdown>
+              <label for="dropdown1">Action Name</label>
+            </span>
+            
+          </div>
+          <div class="col-1 text-end d-flex align-items-center">
+            <button
+              class="btn btn-primary"
+              (click)="getAllUnAssignTaskWithPagination(1)"
+              matTooltip="Search"
+              matTooltipClass="danger-tooltip"
+            >
+              <fa-icon [icon]="faSearch"></fa-icon>
+            </button>
+            <button
+              class="btn btn-light"
+              (click)="OnResetDDL()"
+              matTooltip="Search"
+              matTooltipClass="danger-tooltip"
+            >
+              Clear
+            </button>
+            <button
+              class="btn btn-danger"
+              pTooltip="Close Filter"
+              tooltipPosition="top"
+              matTooltipClass="danger-tooltip"
+              (click)="CloseFilter()"
+            >
+              <fa-icon [icon]="faTimes"></fa-icon>
+            </button>
+          </div>
+        </div>
+        <div
+          class="d-flex align-items-center justify-content-end filter-btn mt-1"
+        >
+          <button
+            class="btn btn-primary"
+            (click)="onFilter()"
+            matTooltip="filter"
+            matTooltipClass="danger-tooltip"
+          >
+            Filter
+          </button>
+          <button
+            class="btn btn-success"
+            pTooltip="Add Task"
+            tooltipPosition="left"
+            (click)="OpenNewTask()"
+          >
+            <i class="sidenav-link-icon pi pi-plus"></i>
+          </button>
+        </div>
+      </div> -->
+
+      <div class="d-flex justify-content-end">
+        <span class="p-input-icon-left p-ml-auto">
+          <!-- <i class="pi pi-search"></i> -->
+          <!-- <input class="form-control-search" pInputText type="text" (input)="dt2.filterGlobal($any($event.target).value, 'contains')" placeholder="Search" /> -->
+          <input
+            type=""
+            class="form-control form-control-search mr-auto form-control-alternative"
+            pInputText
+            type="text"
+            [(ngModel)]="filterMyTask"
+              
+                (keyup.enter)="Search()"
+            
+            placeholder="Search"
+          />
+        </span>
+        <div class="ml-1">
+            <a
+              class="btn btn-primary"
+              title="Add Project"
+              tooltipPosition="top"
+              (click)="onFilter()"
+              style="font-size: 0.8rem"
+              >Filter</a>
+          </div>
+          <div class="ml-1">
+            <a
+              class="btn btn-primary"
+              title="Add Project"
+              tooltipPosition="top"
+              (click)="OpenNewTask()"
+              style="font-size: 0.8rem"
+              ><i class="sidenav-link-icon pi pi-plus"></i
+            ></a>
+          </div>
+        
+        <div class="d-flex"*ngIf="IsShowDDL">
+
+            <div class="ml-1">
+                <div class=" text-start">
+                    <span class="">
+                        <p-dropdown
+                        inputId="dropdown1"
+                        [autoDisplayFirst]="false"
+                        [options]="deptMaster"
+                        [(ngModel)]="selectedDepartment"
+                        optionLabel="departmentName"
+                        optionValue="departmentId"
+                      ></p-dropdown>
+                     
+                    </span>
+                  </div>
+            </div>
+            <div class="ml-1">
+                <div class=" text-start">
+                    <span class="">
+                        <p-dropdown
+                        inputId="dropdown1"
+                        [autoDisplayFirst]="false"
+                        [options]="AllProjectMaster"
+                        [(ngModel)]="selectedProject"
+                        optionLabel="projectName"
+                        optionValue="projectId"
+                      ></p-dropdown>
+                     
+                    </span>
+                  </div>
+            </div>
+            <div class="ml-1">
+                <div class=" text-start">
+                    <span class="">
+                        <p-dropdown
+                        inputId="dropdown1"
+                        [autoDisplayFirst]="false"
+                        [options]="AllTaskTypeMaster"
+                        [(ngModel)]="selectedTaskType"
+                        optionLabel="taskName"
+                        optionValue="taskId"
+                      ></p-dropdown>
+                     
+                    </span>
+                  </div>
+            </div>
+            <div class="ml-1">
+              <a
+                class="btn btn-primary"
+                title="Add Project"
+                tooltipPosition="top"
+                (click)="CloseFilter()"
+                style="font-size: 0.8rem"
+                ><i class="sidenav-link-icon pi pi-times"></i
+              ></a>
+            </div>
+            <div class="ml-1">
+              <a
+                class="btn btn-primary"
+                title="Add Project"
+                tooltipPosition="top"
+                (click)="getAllUnAssignTaskWithPagination(1)"
+                style="font-size: 0.8rem"
+                ><i class="sidenav-link-icon pi pi-search"></i
+              ></a>
+            </div>
+        
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Sr. No</th>
+        <th class="column-left">
+          Task Title
+       
+        </th>
+        <th class="column-left">
+          Project
+       
+        </th>
+        <th class="column-left">
+          Task Type
+         
+        </th>
+        <th class="column-left">Department</th>
+        <th class="column-left">
+          Description
+        
+        </th>
+        <th class="column-left">
+          Priority
+        
+        </th>
+        <th class="column-left">
+          Assigned By
+         
+        </th>
+        <th class="column-center">
+          Assigned Date
+         
+        </th>
+        <th class="column-center">
+          Expected Time Lines
+         
+        </th>
+        <!-- <th pSortableColumn="exceptedEndDate" class="column-left">Excepted End Date
+          <p-sortIcon field="exceptedEndDate"></p-sortIcon>
+        </th> -->
+
+        <!-- <th pSortableColumn="subType" [width]="150" class="column-center">Status
+          <p-sortIcon field="subType"></p-sortIcon>
+        </th> -->
+        <th [width]="80" class="column-center">Action</th>
+      </tr>
+      <tr></tr>
+    </ng-template>
+    <ng-template
+      pTemplate="body"
+      let-editing="editing"
+      let-task
+      let-i="rowIndex"
+    >
+      <tr [pEditableRow]="task">
+        <td class="text-center">{{ i + 1 + pageSize * (currentPage - 1) }}</td>
+        <td class="column-left">{{ task.title }}</td>
+        <td class="column-left">
+          <span class="image-text">{{ task.projectMaster?.projectName }}</span>
+        </td>
+        <td class="column-left">
+          <span class="image-text">{{ task.taskTypeMaster?.taskName }}</span>
+        </td>
+        <td class="column-left">
+          <span class="image-text">{{
+            task.departmentMaster?.departmentName
+          }}</span>
+        </td>
+        <td class="column-left">
+          <span class="image-text">{{ task.description }}</span>
+        </td>
+        <td class="column-left">
+          <span class="image-text" *ngIf="task.priority == 1">High</span>
+          <span class="image-text" *ngIf="task.priority == 2">Medium</span>
+          <span class="image-text" *ngIf="task.priority == 3">Low</span>
+        </td>
+        <td class="column-left">
+          <span class="image-text">{{ task.assignedBy }}</span>
+        </td>
+        <td class="column-center">
+          <span class="image-text">{{
+            task.assignedDate | date : "dd-MMM-yyyy HH:mm"
+          }}</span>
+        </td>
+        <td class="column-center">
+          <span class="image-text"
+            >{{ task.exceptedStartDate | date : "dd-MM-yyyy HH:mm" }} -
+            {{ task.exceptedEndDate | date : "dd-MM-yyyy HH:mm" }}</span
+          >
+        </td>
+        <!-- <td class="column-left"><span class="image-text">{{task.exceptedEndDate | date: 'dd-MM-yyyy'}}</span></td> -->
+        <!-- <td class="column-center">
+          <span *ngIf="task.isActive  == true ">Active</span>
+          <span *ngIf="task.isActive == false ">Inactive</span>
+        </td> -->
+        <td class="text-primary text-center" title="Edit">
+          <i
+            class="editIcon fa fa-edit"
+            style="cursor: pointer"
+            pTooltip="Edit"
+            (click)="editMyTask(task)"
+          ></i>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td class="column-center" colspan="40">No Task found.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<!-- Dialoge Box -->
+<p-dialog
+  header="{{ title }}"
+  [(visible)]="display"
+  [draggable]="false"
+  [style]="{width: '40vw'}"
+  [keepInViewport]="true"
+  [modal]="true"
+  styleClass="dialogBox"
+>
+  <div class="container mt-2">
+    <div class="row">
+      <div class="col-md-12">
+        <form autocomplete="off" [formGroup]="TaskForm" autocomplete="off">
+          <div class="form-group">
+            <!-- Row 1 -->
+            <div class="form-group row mb-0 mt-1">
+              <div class="col-sm-6 my-1">
+                <label for="title">Task Title<sup>*</sup></label>
+                <input
+                  type="text"
+                  tabindex="0"
+                  id="title"
+                  autofocus
+                  class="form-control"
+                  placeholder=""
+                  formControlName="title"
+                  [ngClass]="{ 'is-invalid': submitted && f['title'].errors }"
+                  value=""
+                />
+                <div
+                  *ngIf="submitted && f['title'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['title'].errors['required']">
+                    <small> Task Title is required</small>
+                  </div>
+                  <div
+                    *ngIf="
+                      f['title'].hasError('whitespace') &&
+                      !f['title'].errors['required']
+                    "
+                  >
+                    <small>Blank space not allowed</small>
+                  </div>
+                  <div
+                    *ngIf="
+                      f['title'].errors['minlength'] &&
+                      !f['title'].hasError('whitespace')
+                    "
+                  >
+                    <small> Task Title must be at least 3 characters</small>
+                  </div>
+                  <div
+                    *ngIf="
+                      f['title'].errors['maxlength'] &&
+                      !f['title'].errors['minlength'] &&
+                      !f['title'].hasError('whitespace')
+                    "
+                  >
+                    <small>Task Title must not exceed 50 characters</small>
+                  </div>
+                  <!-- <div *ngIf="f['title'].errors['minlength']">
+                    <small>
+                      Task Title must be at least 4 characters.
+                    </small>
+                  </div>
+                  <div *ngIf="f['title'].errors['maxlength']">
+                    <small>
+                      Task Title must not exceed 100 characters.
+                    </small>
+                  </div>
+                  <div *ngIf="f['title'].errors['pattern']">
+                    <small>
+                      Task Title should contain only A-Za-z0-9()*%!_@./#&+:=-
+                    </small>
+                    </div> -->
+                </div>
+              </div>
+              <div class="col-sm-6 my-1">
+                <label for="projectId">Project<sup>*</sup></label>
+                <br />
+                <select
+                  name="projectId"
+                  tabindex="7"
+                  class="form-control role-select form-select"
+                  id="projectId"
+                  formControlName="projectId"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['projectId'].errors
+                  }"
+                  placeholder="--Choose Option--"
+                >
+                  <option value="" disabled>Choose Project</option>
+                  <option
+                    *ngFor="let project of projectMaster"
+                    [ngValue]="project.projectId"
+                  >
+                    {{ project.projectName }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="submitted && f['projectId'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['projectId'].errors['required']">
+                    <small>Project is required</small>
+                  </div>
+                </div>
+              </div>
+              <!-- Row 2 -->
+              <div class="col-sm-6 my-1" *ngIf="SaveButtonTitle == 'Add'">
+                <label for="departmentId">Department <sup>*</sup></label>
+                <br />
+                <select
+                  #departmentVal
+                  name="departmentId"
+                  tabindex="7"
+                  class="form-control role-select form-select"
+                  id="departmentId"
+                  formControlName="departmentId"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['departmentId'].errors
+                  }"
+                  placeholder="--Choose Option--"
+                  (change)="ChangeDepartment($event)"
+                >
+                  <option value="" disabled>Choose Department</option>
+                  <option
+                    *ngFor="let project of deptMaster"
+                    [ngValue]="project.departmentId"
+                  >
+                    {{ project.departmentName }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="submitted && f['departmentId'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['departmentId'].errors['required']">
+                    <small>Department is required</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 my-1">
+                <label for="priority">Priority<sup>*</sup></label>
+                <br />
+                <select
+                  name="priority"
+                  tabindex="7"
+                  class="form-control role-select form-select"
+                  id="priority"
+                  formControlName="priority"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['priority'].errors
+                  }"
+                  placeholder="--Choose Option--"
+                >
+                  <option value="" disabled>Choose Priority</option>
+                  <option
+                    *ngFor="let project of AllPriority"
+                    [ngValue]="project.value"
+                  >
+                    {{ project.key }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="submitted && f['priority'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['priority'].errors['required']">
+                    <small>Priority is required</small>
+                  </div>
+                </div>
+              </div>
+              <!-- Row 3 -->
+              <div class="col-sm-6 my-1">
+                <label for="taskTypeId">Task Type<sup>*</sup></label>
+                <br />
+                <select
+                  name="taskTypeId"
+                  tabindex="7"
+                  class="form-control role-select form-select"
+                  id="taskTypeId"
+                  formControlName="taskTypeId"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['taskTypeId'].errors
+                  }"
+                  placeholder="--Choose Option--"
+                >
+                  <option value="" disabled>Choose Task Type</option>
+                  <option
+                    *ngFor="let project of taskTypeMaster"
+                    [ngValue]="project.taskId"
+                  >
+                    {{ project.taskName }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="submitted && f['taskTypeId'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['taskTypeId'].errors['required']">
+                    <small>Task Type is required</small>
+                  </div>
+                </div>
+              </div>
+              <!-- Row 4 -->
+              <div class="col-sm-6 my-1">
+                <label for="assignedTo">Assign </label>
+                <br />
+                <select
+                  name="assignedTo"
+                  tabindex="7"
+                  class="form-control role-select form-select"
+                  id="assignedTo"
+                  formControlName="assignedTo"
+                  placeholder="--Choose Option--"
+                  (change)="ChangeAssignedTo()"
+                >
+                  <option value="" selected>Choose Emp to Assign</option>
+                  <option
+                    *ngFor="let user of AllAssignToUsers"
+                    [ngValue]="user.id"
+                  >
+                    {{ user.firstName }} {{ user.lastName }}
+                  </option>
+                </select>
+
+                <!-- <p-multiSelect [options]="AllAssignToUsers" optionLabel="firstName" optionValue="id" formControlName="assignedTo"></p-multiSelect> -->
+              </div>
+              <div class="col-sm-6 my-1">
+                <label for="exceptedStartDate"
+                  >Expected Start Date<sup *ngIf="star1">*</sup></label
+                >
+                <input
+                  type="datetime-local"
+                  tabindex="7"
+                  id="exceptedStartDate"
+                  autofocus
+                  class="form-control"
+                  placeholder=""
+                  formControlName="exceptedStartDate"
+                  readonlyInput="true"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['exceptedStartDate'].errors
+                  }"
+                  value=""
+                  onkeydown="return false"
+                />
+                <div
+                  *ngIf="submitted && f['exceptedStartDate'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['exceptedStartDate'].errors['required']">
+                    <small> Expected Start Date is required</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-6 my-1">
+                <label for="exceptedEndDate"
+                  >Expected End Date<sup *ngIf="star2">*</sup></label
+                >
+                <input
+                  type="datetime-local"
+                  tabindex="0"
+                  id="exceptedEndDate"
+                  class="form-control"
+                  placeholder=""
+                  formControlName="exceptedEndDate"
+                  readonlyInput="true"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['exceptedEndDate'].errors
+                  }"
+                  value=""
+                  onkeydown="return false"
+                />
+                <div
+                  *ngIf="submitted && f['exceptedEndDate'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['exceptedEndDate'].errors['required']">
+                    <small>Expected End Date is required</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-12 my-1">
+                <label for="description">Description</label>
+                <textarea
+                  id="description"
+                  class="form-control"
+                  formControlName="description"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['description'].errors
+                  }"
+                ></textarea>
+                <div
+                  *ngIf="submitted && f['description'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['description'].errors['required']">
+                    <small class="text-danger"> Description is required </small>
+                  </div>
+                  <div *ngIf="f['description'].errors['minlength']">
+                    <small> Description must be at least 4 characters </small>
+                  </div>
+                  <div *ngIf="f['description'].errors['maxlength']">
+                    <small> Description must not exceed 1000 characters </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group row my-2" *ngIf="SaveButtonTitle != 'Add'">
+              <div class="col-12">
+                <label class="form-check-inline">
+                  <input
+                    class="form-check-input"
+                    id="isActive"
+                    type="radio"
+                    name="isActive"
+                    [value]="true"
+                    formControlName="isActive"
+                  />
+                  Active
+                </label>
+                <label class="form-check-inline">
+                  <input
+                    class="form-check-input"
+                    id="Inactive"
+                    type="radio"
+                    name="isActive"
+                    [value]="false"
+                    formControlName="isActive"
+                  />
+                  Inactive
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="container model-footer">
+    <button tabindex="8" class="btn btn-primary m-2" (click)="updateTask()">
+      {{ SaveButtonTitle }}
+    </button>
+    <button
+      *ngIf="SaveButtonTitle == 'Add'"
+      tabindex="9"
+      class="btn btn-danger m-2"
+      (click)="OnReset()"
+    >
+      Reset
+    </button>
+    <button tabindex="10" class="btn button m-2" (click)="display = false">
+      Close
+    </button>
+  </div>
+</p-dialog>

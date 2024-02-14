@@ -1,0 +1,203 @@
+
+
+<div
+  class="user_registration mb-3"
+  
+>
+<mat-card>
+  <mat-card-content>
+    <p-table
+      #dt2
+      [value]="allUserAccessMapping"
+      [(selection)]="roleMaster"
+      selectionMode="multiple"
+      dataKey="filter"
+      styleClass="p-datatable-gridlines"
+      responsiveLayout="scroll"
+      [rows]="10"
+      [paginator]="true"
+      [globalFilterFields]="['roleName']"
+    >
+      <!-- multiple -->
+      <ng-template pTemplate="caption">
+        <div class="d-flex justify-content-end">
+          <span class="p-input-icon-left p-ml-auto">
+            <!-- <i class="pi pi-search"></i> -->
+            <!-- <input class="form-control-search" pInputText type="text" (input)="dt2.filterGlobal($any($event.target).value, 'contains')" placeholder="Search" /> -->
+            <input
+              type=""
+              class="form-control form-control-search mr-auto form-control-alternative"
+              pInputText
+              type="text"
+              (input)="dt2.filterGlobal($any($event.target).value, 'contains')"
+              placeholder="Search"
+            />
+          </span>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="column-center" [width]="100">Sr. No</th>
+          <!-- <th class="column-center" [width]="50">Sr. No</th> -->
+          <th pSortableColumn="name" class="column-center" [width]="200">
+            Role Name
+           
+          </th>
+          <th class="column-center">Access Mapping</th>
+          <th [width]="100" class="column-center">Screen Count</th>
+          <th [width]="100" class="column-center">Status</th>
+          <th [width]="80" class="column-center">Edit</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-accessMapping let-i="rowIndex">
+        <tr>
+          <td class="column-center">{{ i + 1 }}</td>
+          <td class="column-center">
+            <span class="p-column-title">Role Name</span>
+            <span class="image-text">{{ accessMapping.roleName }}</span>
+          </td>
+          <td class="column-center">
+            <span class="p-column-title">Role Name</span>
+            <span class="image-text">{{ accessMapping.userAccess }}</span>
+          </td>
+          <td class="column-center">
+            <span class="image-text">{{ accessMapping.count }}</span>
+          </td>
+          <td class="column-center">
+            <span class="p-column-title">isActive</span>
+            <span *ngIf="accessMapping.status == true">Active</span>
+            <span *ngIf="accessMapping.status == false">Inactive</span>
+          </td>
+          <td
+           
+            class="text-primary text-center"
+            style="cursor: pointer"
+ 
+            (click)="editModalPopup(edit, accessMapping.roleId, accessMapping)"
+            title="Edit"
+          >
+            <i class="editIcon fa fa-edit"></i>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="40">No Data found.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </mat-card-content>
+</mat-card>
+</div>
+<!-- </div> -->
+
+<ng-template #edit let-modal class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="modal-title mt-4">
+        User Role mapping - {{ singleUserAccessMapping.roleName }}
+      </span>
+      <span
+        type="button"
+        class="close-btn-icon"
+        aria-label="Close"
+        (click)="modal.dismiss('Cross click')"
+      >
+        X
+      </span>
+    </div>
+    <div class="modal-body mt-1" style="overflow-y: scroll; height: 400px">
+      <table class="table parameter-table table-bordered">
+        <thead>
+          <tr>
+            <th class="screenName">Screen Name</th>
+            <th>Read Only</th>
+            <th>Create</th>
+            <th>Update</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            class="damage-report-table"
+            *ngFor="
+              let userAccess of singleUserAccessMapping.userAccessManagerResponse;
+              let i = index
+            "
+          >
+            <td class="screenName">{{ userAccess.screenName }}</td>
+            <td class="check-box mt-0 mb-0">
+              <input
+                type="checkbox"
+                [checked]="userAccess.isActive"
+                name="canRead"
+                [(ngModel)]="userAccess.isActive"
+              />
+            </td>
+            <td class="check-box mt-0 mb-0">
+              <input
+                type="checkbox"
+                [checked]="userAccess.canCreate"
+                name="canCreate"
+                [(ngModel)]="userAccess.canCreate"
+              />
+            </td>
+            <td class="check-box mt-0 mb-0">
+              <input
+                type="checkbox"
+                [checked]="userAccess.canUpdate"
+                name="canUpdate"
+                [(ngModel)]="userAccess.canUpdate"
+              />
+            </td>
+
+            <td class="check-box mt-0 mb-0">
+              <input
+                type="checkbox"
+                [checked]="userAccess.canDeactivate"
+                name="canDeactivate"
+                [(ngModel)]="userAccess.canDeactivate"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- <hr class="hr mb-0" /> -->
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="modal-button btn btn-primary"
+        aria-label="Close"
+        (click)="SelectAll()"
+      >
+        All
+      </button>
+      <button
+        type="button"
+        class="modal-button btn btn-danger"
+        aria-label="Close"
+        (click)="ClearAll()"
+      >
+        Clear
+      </button>
+      <button
+        type="button"
+        class="modal-button btn btn-secondary"
+        aria-label="Close"
+        (click)="modal.dismiss('Cross click')"
+      >
+        Close
+      </button>
+      <button
+        type="submit"
+        class="modal-button btn btn-success"
+        (click)="assignUserRoleAccessMapping()"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+</ng-template>

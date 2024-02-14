@@ -1,0 +1,2494 @@
+<p-toast position="bottom-right"></p-toast>
+
+<p-tabView>
+  <p-tabPanel
+    header="My Desk ({{ totalCountOfMyDesk }})"
+    tooltipPosition="left"
+    tooltip="{{ totalCountOfMyDesk }}"
+  >
+    
+      <div class="d-flex row myDeskfilterClass justify-content-around" *ngIf="IsShowDDL1">
+        <div class="col">
+          <span class="">
+            <input
+              id="float-input"
+              type="text"
+              pInputText
+              [(ngModel)]="filterMyTask"
+              id="filter"
+              (keyup.enter)="Search()"
+              placeholder="Task Title"
+            />
+          </span>
+        </div>
+        <div class="col">
+          <span class="">
+            <p-dropdown
+              inputId="dropdown1"
+              [autoDisplayFirst]="false"
+              [options]="GetAllAssignedBy"
+              [(ngModel)]="selectedUserBy1"
+              optionLabel="userName"
+              optionValue="id"
+            ></p-dropdown>
+       
+          </span>
+        </div>
+        <div class="col">
+          <span class="">
+            <p-dropdown
+              inputId="projectName"
+              [autoDisplayFirst]="false"
+              [options]="AllProjectMaster"
+              [(ngModel)]="selectedMyProject"
+              optionLabel="projectName"
+              optionValue="projectId"
+            ></p-dropdown>
+           
+          </span>
+        </div>
+        <div class="col">
+          <span class="">
+            <p-dropdown
+              inputId="taskName"
+              [autoDisplayFirst]="false"
+              [options]="AllTaskTypeMaster"
+              [(ngModel)]="selectedMyTask"
+              optionLabel="taskName"
+              optionValue="taskId"
+            ></p-dropdown>
+           
+          </span>
+        </div>
+        <div class="col">
+          <span class="">
+            <p-dropdown
+              inputId="status"
+              [autoDisplayFirst]="false"
+              [options]="AllMyStatus"
+              [(ngModel)]="selectedMyStatus"
+              optionLabel="key"
+              optionValue="status"
+            ></p-dropdown>
+          
+          </span>
+        </div>
+     
+      </div>
+ 
+ 
+
+    <div class="d-flex align-items-center justify-content-end filter-btn">
+      <div class="d-flex justify-content-end my-2"*ngIf="IsShowDDL1">
+        <button
+          class="btn btn-secondary"
+          (click)="getTaskTransactionWithPagination(1)"
+          pTooltip="Search"
+          tooltipPosition="top"
+          matTooltipClass="danger-tooltip"
+        >
+          <fa-icon [icon]="faSearch"></fa-icon>
+        </button>
+        <button
+          class="btn btn-light ml-1 "
+          (click)="OnResetDDL_Tab1()"
+          pTooltip="Reset"
+          tooltipPosition="top"
+          matTooltipClass="danger-tooltip"
+        >
+          Clear
+        </button>
+        <button
+          class="btn btn-danger ml-1"
+          pTooltip="Close Filter"
+          tooltipPosition="top"
+          matTooltipClass="danger-tooltip"
+          (click)="CloseFilter_Tab1()"
+        >
+          Close
+        </button>
+        <!-- <a class="btn btn-success" pTooltip="Add Task" tooltipPosition="top" (click)="OpenSelfTask()"
+           ><i class="sidenav-link-icon pi pi-plus"></i></a> -->
+      </div>
+      <button
+        class="btn btn-primary ml-1"
+        (click)="onFilterTab1()"
+        matTooltip="filter"
+        matTooltipClass="danger-tooltip"
+      >
+        Filter
+      </button>
+      <button
+        class="btn btn-success ml-1"
+        pTooltip="Add Task"
+        tooltipPosition="left"
+        (click)="OpenSelfTask()"
+      >
+        <i class="sidenav-link-icon pi pi-plus"></i>
+      </button>
+    </div>
+    <div class=" my-2">
+      <mat-card>
+        <mat-card-content>
+      <p-table
+        #dt1
+        [value]="AllMyTaskData"
+        [(selection)]="AllMyTaskData"
+        selectionMode="single"
+        dataKey="filter"
+        styleClass="p-datatable-gridlines"
+        responsiveLayout="scroll"
+        [rows]="pageSize"
+        [first]="skiprow"
+        [totalRecords]="totalCountOfMyDesk"
+        [paginator]="true"
+        [lazy]="true"
+        currentPageReportTemplate="Total Records: {{ totalCountOfMyDesk }}"
+       
+        [showCurrentPageReport]="true"
+        (onPage)="pagechange($event)"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Sr. No</th>
+            <th class="column-left">
+              Task Title
+             
+            </th>
+            <th class="column-left">
+              Project
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Action Type
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Description
+             
+            </th>
+            <th class="column-left">
+              Priority
+            
+            </th>
+            <th class="column-left">
+              Assigned By
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-center">
+              Assigned Date
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-center">
+              Expected Timeline
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <!-- <th pSortableColumn="designationName" class="column-center">Excepted End Date
+
+            </th> -->
+            <th class="column-center">
+              Actual Timeline
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <!-- <th pSortableColumn="designationName" class="column-center">Actual End Date
+
+            </th> -->
+            <th [width]="100" class="column-center">
+              Status
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+
+            <!-- <th pSortableColumn="subType" [width]="150" class="column-center">Active Status
+            </th> -->
+            <th [width]="80" class="column-center">Action</th>
+            <!-- <th [width]="80" class="column-center">Delegate</th> -->
+          </tr>
+          <tr></tr>
+        </ng-template>
+        <ng-template
+          pTemplate="body"
+          let-editing="editing"
+          let-task
+          let-i="rowIndex"
+        >
+          <tr
+            [pEditableRow]="task"
+            [ngClass]="{
+              overdueTask: task.status == 'Overdue',
+              WIP: task.status == 'WIP' || task.status == 'Work In Progress',
+              pendingTask: task.status == 'Pending',
+              completed: task.status == 'Completed',
+              onHoldTask: task.status == 'On Hold',
+              delegateTask: task.status == 'Delegated'
+            }"
+          >
+            <td class="text-center">
+              {{ i + 1 + pageSize * (currentPage - 1) }}
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ task.title }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{
+                task.projectMaster?.projectName
+              }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{
+                task.taskTypeMaster?.taskName
+              }}</span>
+            </td>
+            <!-- <td class="column-left"><span class="image-text">{{task.description}}</span></td> -->
+            <td
+              class="column-left"
+              pTooltip="{{ task.description }}"
+              tooltipPosition="top"
+            >
+              <span class="image-text">
+                {{
+                  task.description.length > 20
+                    ? (task.description | slice : 0 : 20) + ".."
+                    : task.description
+                }}</span
+              >
+            </td>
+            <td class="column-left">
+              <span class="image-text" *ngIf="task.priority == 1">High</span>
+              <span class="image-text" *ngIf="task.priority == 2">Medium</span>
+              <span class="image-text" *ngIf="task.priority == 3">Low</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ task.assignedBy }}</span>
+            </td>
+            <td class="column-center">
+              <span class="image-text">{{
+                task.assignedDate | date : "dd-MMM-yyyy HH:mm"
+              }}</span>
+            </td>
+            <td class="column-center">
+              <span>{{
+                task.exceptedStartDate | date : "dd-MMM-yyyy HH:mm"
+              }}</span>
+              <span class="d-block">{{
+                task.exceptedEndDate | date : "dd-MMM-yyyy HH:mm"
+              }}</span>
+            </td>
+            <!-- <td class="column-center"><span class="image-text">{{task.exceptedEndDate | date: 'dd-MM-yyyy'}}</span></td> -->
+            <td class="column-center">
+              <span class="" *ngIf="task.actualStartDate != null">{{
+                task.actualStartDate | date : "dd-MM-yyyy HH:mm"
+              }}</span>
+              <!-- <span class="image-text" *ngIf="task.actualStartDate == null">Task Not Started</span> -->
+
+              <span class="d-block" *ngIf="task.actualEndDate != null">{{
+                task.actualEndDate | date : "dd-MM-yyyy HH:mm"
+              }}</span>
+              <!-- <span class="image-text" *ngIf="task.actualEndDate == null">Task Not Ended</span> -->
+            </td>
+            <!-- <td class="column-right">
+              <span class="image-text" *ngIf="task.actualEndDate != null">{{task.actualEndDate | date:
+                'dd-MM-yyyy'}}</span>
+              <span class="image-text" *ngIf="task.actualEndDate == null">Task Not Ended</span>
+            </td> -->
+            <td
+              class="column-center statusInput"
+              pEditableColumn
+              (click)="openStatusOfMyTeam(i + 1, task)"
+              pTooltip="Edit"
+              tooltipPosition="top"
+              *ngIf="task.status != 'Completed'"
+            >
+              <p-cellEditor *ngIf="isShowEditIcon" class="cursor-pointer">
+                <ng-template pTemplate="input">
+                  <select
+                    name="status"
+                    class="form-control role-select form-select"
+                    id="status"
+                    [(ngModel)]="statusRowValue"
+                    (change)="OnSelectItem()"
+                  >
+                    <option
+                      *ngFor="let project of AllStatus1"
+                      [ngValue]="project.status"
+                    >
+                      {{ project.status }}
+                    </option>
+                  </select>
+                  <i
+                    style="cursor: pointer"
+                    (click)="editingStatus = false"
+                    (click)="closeMyStatus()"
+                    pRipple
+                    pCancelEditableRow
+                    class="fa fa-times mt-2 text-danger"
+                  ></i
+                  >&nbsp; &nbsp;
+                  <i
+                    style="cursor: pointer"
+                    pRipple
+                    pSaveEditableRow
+                    class="fa fa-check mt-2 text-success"
+                    (click)="saveStatusOfMyTeam(task)"
+                  ></i>
+                </ng-template>
+                <ng-template pTemplate="output">
+                  {{ task.status }} &nbsp;
+                  <i
+                    pRipple
+                    pInitEditableRow
+                    class="pi pi-angle-down text-primary"
+                  ></i>
+                </ng-template>
+              </p-cellEditor>
+            </td>
+
+            <td class="column-center" *ngIf="task.status == 'Completed'">
+              <span class="image-text">{{ task.status }}</span>
+            </td>
+            <!-- 
+            <div class="text-center" data-anime-top="scroll-top">
+              <p><span class="statusTooltip"><i pRipple pSaveEditableRow class="fa fa-edit mt-2 text-success"
+                (click)="saveStatusOfMyTeam(task)"></i> <br>On Hold<span class="statusTooltip-text">
+                  <form>
+                    <select name="" id="" class="form-control w-50">
+                      <option value="">1</option>
+                      <option value="">2</option>
+                      <option value="">3</option>
+                      <option value="">4</option>
+                    </select>
+                    <button class="btn btn-primary">Ok</button>
+                  </form>
+                </span></span></p>
+            </div> -->
+
+            <!-- <td class="column-right"><span class="image-text">{{task.status}}</span></td> -->
+            <!-- <td class="column-center">
+              <span *ngIf="task.isActive  == true ">Active</span>
+              <span *ngIf="task.isActive == false ">Inactive</span>
+            </td> -->
+            <td
+              class="text-primary text-center"
+              pTooltip="Action"
+              tooltipPosition="top"
+            >
+              <!-- <i class="editIcon fa fa-edit" style="cursor: pointer;" pTooltip="Edit" (click)="editMyTask(task)"></i> -->
+
+              <div class="nav-item dropdown d-inline" ngbDropdown>
+                <a
+                  class="nav-link dropdown-toggle d-inline"
+                  id="navbarScrollingDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown "
+                  aria-expanded="false"
+                  ngbDropdownToggle
+                >
+                  <i
+                    class="editIcon fa fa-ellipsis-v"
+                    style="cursor: pointer"
+                  ></i>
+                </a>
+                <ul
+                  class="dropdown-menu profile-nav-item dropdown-menu-right"
+                  ngbDropdownMenu
+                  aria-labelledby="navbarScrollingDropdown"
+                >
+                  <li
+                    ngbDropdownItem
+                    *ngIf="
+                      task.status != 'Completed' && task.status != 'Closed'
+                    "
+                  >
+                    <a class="dropdown-item" (click)="editMyTask(task)">
+                      <i class="editIcon fa fa-edit" style="cursor: pointer"></i
+                      >&nbsp;&nbsp; Edit</a
+                    >
+                  </li>
+                  <li
+                    ngbDropdownItem
+                    *ngIf="
+                      task.status != 'Completed' &&
+                      task.status != 'Closed' &&
+                      task.status != 'Delegated' &&
+                      task.status != 'Invalid'
+                    "
+                  >
+                    <a class="dropdown-item" (click)="OpenDelegate(task)">
+                      <i
+                        class="editIcon fa fa-exchange"
+                        style="cursor: pointer"
+                      ></i
+                      >&nbsp;&nbsp; Delegate</a
+                    >
+                  </li>
+                  <li ngbDropdownItem>
+                    <a
+                      class="dropdown-item"
+                      (click)="getTaskHistory(task, task.taskId)"
+                    >
+                      <i class="editIcon fa fa-eye" style="cursor: pointer"></i
+                      >&nbsp;&nbsp; View Detail</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </td>
+            <!-- <td class="text-primary text-center" title="Edit">
+              <i class="editIcon fa fa-exchange" style="cursor: pointer;" tooltipPosition="left"
+                (click)="OpenDelegate(task)" pTooltip="Assign to Others"></i>
+            </td> -->
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td class="column-center" colspan="40">No Task found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </p-tabPanel>
+
+
+  <p-tabPanel
+    header="My Team Desk ({{ totalCountOfMyTeam }})"
+    tooltipPosition="left"
+    tooltip="{{ totalCountOfMyTeam }}"
+    *ngIf="IsMyTeam"
+  >
+  
+      <div class="d-flex row myTeamfilterClass mt-2" *ngIf="IsShowDDL2">
+        <div class="col">
+          <!-- <div class="form-floating">
+            <input type="" class="form-control " pInputText type="text" [(ngModel)]="filterMyTeamTask" id="filter1"
+              (keyup.enter)="SearchForMyTeamTask()" placeholder="Search by Title">
+            <label for="filter1">Search by Task Title</label>
+          </div> -->
+          <span class="">
+            <input
+              id="float-input"
+              type="text"
+              pInputText
+              [(ngModel)]="filterMyTeamTask"
+              id="filter1"
+              (keyup.enter)="SearchForMyTeamTask()"
+              placeholder="Task Title"
+              style="font-size: 13px"
+            />
+          </span>
+        </div>
+        <div class="col">
+          <!-- <div class="form-floating">
+            <select name="assignedById" [(ngModel)]="selectedUserBy" class="form-control role-select form-select"
+              id="assignedById" placeholder="--Choose Option--">
+              <option value=''> All </option>
+              <option *ngFor="let project of GetAllAssignedBy" [ngValue]="project.userName">
+                {{project.userName}}</option>
+            </select>
+            <label for="assignedById">Search By Assign by User</label>
+          </div> -->
+          <span class="">
+            <p-dropdown
+              inputId="userName"
+              [autoDisplayFirst]="false"
+              [options]="GetAllAssignedBy"
+              [(ngModel)]="selectedUserBy2"
+              optionLabel="userName"
+              optionValue="id"
+            ></p-dropdown>
+           
+          </span>
+        </div>
+        <div class="col">
+          <!-- <div class="form-floating">
+            <select name="assignedTo" [(ngModel)]="selectedUserTo" class="form-control role-select form-select"
+              id="assignedTo" placeholder="--Choose Option--">
+              <option value=''> All </option>
+              <option *ngFor="let project of GetAllAssignedTo" [ngValue]="project.id">
+                {{project.userName}}</option>
+            </select>
+            <label for="assignedTo">Search By Assign to User</label>
+          </div> -->
+          <span class="">
+            <p-dropdown
+              inputId="userName"
+              [autoDisplayFirst]="false"
+              [options]="GetAllAssignedTo"
+              [(ngModel)]="selectedUserTo1"
+              optionLabel="userName"
+              optionValue="id"
+            ></p-dropdown>
+          
+          </span>
+        </div>
+        <div class="col">
+          <!-- <div class="form-floating">
+            <select name="projectId" [(ngModel)]="selectedProject" tabindex="7"
+              class="form-control role-select form-select" id="projectId"
+              [ngClass]="{ 'is-invalid': submitted && f['projectId'].errors }" placeholder="--Choose Option--">
+              <option value=0> All </option>
+              <option *ngFor="let project of AllProjectMaster" [ngValue]="project.projectId">
+                {{project.projectName}}</option>
+            </select>
+            <label for="projectId">Search By Project</label>
+          </div> -->
+          <span class="">
+            <p-dropdown
+              inputId="projectName"
+              [autoDisplayFirst]="false"
+              [options]="AllProjectMaster"
+              [(ngModel)]="selectedMyTeamProject"
+              optionLabel="projectName"
+              optionValue="projectId"
+            ></p-dropdown>
+           
+          </span>
+        </div>
+        <div class="col">
+          <!-- <div class="form-floating">
+            <select name="taskTypeId" [(ngModel)]="selectedTask" tabindex="7" class="form-control role-select form-select"
+              id="taskTypeId" [ngClass]="{ 'is-invalid': submitted && f['taskTypeId'].errors }"
+              placeholder="--Choose Option--">
+              <option value=0> All </option>
+              <option *ngFor="let project of AllTaskTypeMaster" [ngValue]="project.taskId">
+                {{project.taskName}}</option>
+            </select>
+            <label for="taskTypeId">Search By task Type</label>
+          </div> -->
+          <span class="">
+            <p-dropdown
+              inputId="taskName"
+              [autoDisplayFirst]="false"
+              [options]="AllTaskTypeMaster"
+              [(ngModel)]="selectedMyTeamTask"
+              optionLabel="taskName"
+              optionValue="taskId"
+            ></p-dropdown>
+            
+          </span>
+        </div>
+        <div class="col">
+          <!-- <div class="form-floating">
+            <select name="status" [(ngModel)]="selectedStatus" tabindex="7" class="form-control role-select form-select"
+              id="status" [ngClass]="{ 'is-invalid': submitted && f['status'].errors }" placeholder="--Choose Option--">
+              <option value=''> All </option>
+              <option *ngFor="let project of AllStatus" [ngValue]="project.status">
+                {{project.status}}</option>
+            </select>
+            <label for="status">Search By Status</label>
+          </div> -->
+          <span class="">
+            <p-dropdown
+              inputId="status"
+              [autoDisplayFirst]="false"
+              [options]="AllMyTeamStatus"
+              [(ngModel)]="selectedMyTeamStatus"
+              optionLabel="key"
+              optionValue="status"
+            ></p-dropdown>
+            
+          </span>
+        </div>
+     
+      </div>
+      <div class=" d-flex align-items-center justify-content-end filter-btn">
+        <div class="d-flex my-2 justify-content-end" *ngIf="IsShowDDL2">
+          <button
+            class="btn btn-info "
+            (click)="getTeamTaskTransactionWithPagination(1)"
+            pTooltip="Search"
+            tooltipPosition="top"
+            matTooltipClass="danger-tooltip"
+          >
+            <fa-icon [icon]="faSearch"></fa-icon>
+          </button>
+          <button
+            class="btn btn-light ml-1"
+            (click)="OnResetDDL_Tab2()"
+            pTooltip="Reset"
+            tooltipPosition="top"
+            matTooltipClass="danger-tooltip"
+          >
+            Clear
+          </button>
+          <button
+            class="btn btn-danger ml-1"
+            pTooltip="Close Filter"
+            tooltipPosition="top"
+            matTooltipClass="danger-tooltip"
+            (click)="CloseFilter_Tab2()"
+          >
+            <fa-icon [icon]="faTimes"></fa-icon>
+          </button>
+          <!-- <a class="btn btn-primary mx-2" pTooltip="Add Task" tooltipPosition="left" (click)="OpenTeamTask()"><i
+              class="sidenav-link-icon pi pi-plus"></i></a> -->
+        </div>
+        <button
+          class="btn btn-primary ml-1"
+          (click)="onFilterTab2()"
+          matTooltip="filter"
+          matTooltipClass="danger-tooltip"
+        >
+          Filter
+        </button>
+        <button
+          class="btn btn-success ml-1"
+          pTooltip="Add Task"
+          tooltipPosition="left"
+          (click)="OpenTeamTask()"
+        >
+          <i class="sidenav-link-icon pi pi-plus"></i>
+        </button>
+      </div>
+    
+
+    <div class=" my-1">
+      <mat-card>
+        <mat-card-content>
+      <p-table
+        #dt2
+        [value]="AllMyTeamTaskData"
+        [(selection)]="AllMyTeamTaskData"
+        selectionMode="single"
+        dataKey="filter1"
+        styleClass="p-datatable-gridlines"
+        responsiveLayout="scroll"
+        [rows]="pageSize1"
+        [first]="skiprow1"
+        [totalRecords]="totalCountOfMyTeam"
+        [paginator]="true"
+        [lazy]="true"
+        currentPageReportTemplate="Total {{ totalCountOfMyTeam }} records"
+       
+        [showCurrentPageReport]="true"
+        (onPage)="pagechange1($event)"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Sr. No</th>
+            <th class="column-left">Task Title</th>
+            <th class="column-left">Project</th>
+            <th class="column-left">Task Type</th>
+            <th class="column-left">Description</th>
+            <th class="column-left">Priority</th>
+            <th class="column-left">Assigned By</th>
+            <th class="column-left">Assigned To</th>
+            <th class="column-center">Assigned Date</th>
+            <th class="column-center">Excepted Timeline</th>
+            <!-- <th pSortableColumn="exceptedEndDate" class="column-center">Excepted End Date
+            </th> -->
+            <th class="column-center">Actual Timeline</th>
+            <!-- <th pSortableColumn="actualEndDate" class="column-center">Actual End Date
+            </th> -->
+            <th [width]="80" class="column-center">Status</th>
+            <th [width]="80" class="column-center">Action</th>
+            <!-- <th [width]="80" class="column-center">Delegate</th> -->
+          </tr>
+          <tr></tr>
+        </ng-template>
+        <ng-template
+          pTemplate="body"
+          let-editing="editing"
+          let-task
+          let-i="rowIndex"
+        >
+          <tr
+            [pEditableRow]="task"
+            [ngClass]="{
+              overdueTask: task.status == 'Overdue',
+              WIP: task.status == 'WIP' || task.status == 'Work In Progress',
+              pendingTask: task.status == 'Pending',
+              completed: task.status == 'Completed',
+              onHoldTask: task.status == 'On Hold',
+              delegateTask: task.status == 'Delegated'
+            }"
+          >
+            <td class="text-center">
+              {{ i + 1 + pageSize * (currentPage - 1) }}
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ task.title }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{
+                task.projectMaster?.projectName
+              }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{
+                task.taskTypeMaster?.taskName
+              }}</span>
+            </td>
+            <!-- <td class="column-left"><span class="image-text">{{task.description}}</span></td> -->
+            <td
+              class="column-left"
+              pTooltip="{{ task.description }}"
+              tooltipPosition="top"
+            >
+              <span class="image-text">
+                {{
+                  task.description.length > 20
+                    ? (task.description | slice : 0 : 20) + ".."
+                    : task.description
+                }}</span
+              >
+            </td>
+            <td class="column-left">
+              <span class="p-column-title">priority</span>
+              <span class="image-text" *ngIf="task.priority == 1">High</span>
+              <span class="image-text" *ngIf="task.priority == 2">Medium</span>
+              <span class="image-text" *ngIf="task.priority == 3">Low</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ task.assignedBy }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ task.userManager?.userName }}</span>
+            </td>
+            <td class="column-center">
+              <span class="image-text">{{
+                task.assignedDate | date : "dd-MMM-yyyy HH:mm"
+              }}</span>
+            </td>
+            <td class="column-center">
+              <span class="image-text"
+                >{{ task.exceptedStartDate | date : "dd-MM-yyyy HH:mm" }} -
+                {{ task.exceptedEndDate | date : "dd-MM-yyyy HH:mm" }}</span
+              >
+            </td>
+            <td class="column-center">
+              <span class="image-text"
+                >{{ task.actualStartDate | date : "dd-MM-yyyy HH:mm" }} -
+                {{ task.actualEndDate | date : "dd-MM-yyyy HH:mm" }}</span
+              >
+            </td>
+            <!-- <td class="column-right"><span class="image-text">{{task.exceptedEndDate | date: 'dd-MM-yyyy'}}</span></td> -->
+            <!-- <td class="column-right">
+              <span class="image-text" *ngIf="task.actualStartDate != null">{{task.actualStartDate | date:
+                'dd-MM-yyyy'}}</span>
+              <span class="image-text" *ngIf="task.actualStartDate == null">Task Not Started</span>
+            </td>
+            <td class="column-right">
+              <span class="image-text" *ngIf="task.actualEndDate != null">{{task.actualEndDate | date:
+                'dd-MM-yyyy'}}</span>
+              <span class="image-text" *ngIf="task.actualEndDate == null">Task Not Ended</span>
+            </td> -->
+            <td class="column-center">
+              <span class="image-text">{{ task.status }}</span>
+            </td>
+            <!-- <td class="column-center statusInput" pEditableColumn (click)="openStatusOfMyTeam(i+1,task)"
+              *ngIf="task.status != 'Completed'">
+              <p-cellEditor pTooltip="Edit" tooltipPosition="top">
+                <ng-template pTemplate="input">
+                  <select name="status" class="form-control role-select form-select" id="status"
+                    [(ngModel)]="statusRowValue">
+                    <option *ngFor="let project of AllStatus1" [ngValue]="project.status">
+                      {{project.status}}</option>
+                  </select>
+                  <i style="cursor: pointer;" pRipple pSaveEditableRow class="fa fa-check mt-2 text-success"
+                    (click)="saveStatusOfMyTeam(task)"></i> &nbsp; &nbsp;
+                  <i style="cursor: pointer;" (click)="editingStatus = false" (click)="closeMyTeamStatus()" pRipple
+                    pCancelEditableRow class="fa fa-times mt-2 text-danger"></i>
+                </ng-template>
+                <ng-template pTemplate="output">
+                  {{task.status}} &nbsp;
+                  <i style="cursor: pointer;" pRipple pInitEditableRow class="fa fa-pencil text-primary"></i>
+                </ng-template>
+              </p-cellEditor>
+            </td>-->
+            <!-- <td class="column-center" *ngIf="task.status == 'Completed'"><span class="image-text">{{task.status}}</span>
+            </td>  -->
+            <!-- <td class="column-center">
+              <span *ngIf="task.isActive  == true ">Active</span>
+              <span *ngIf="task.isActive == false ">Inactive</span>
+            </td> -->
+            <!-- <td class="text-primary text-center" title="Edit">
+              <i class="editIcon fa fa-edit" style="cursor: pointer;" (click)="editMyTask(task)" pTooltip="Edit"></i>
+            </td>
+            <td class="text-primary text-center" title="Edit">
+              <i class="editIcon fa fa-exchange" style="cursor: pointer;" tooltipPosition="left"
+                (click)="OpenDelegate(task)" pTooltip="Assign to Others"></i>
+            </td> -->
+
+            <td
+              class="text-primary text-center"
+              pTooltip="Action"
+              tooltipPosition="top"
+            >
+              <!-- <i class="editIcon fa fa-edit" style="cursor: pointer;" pTooltip="Edit" (click)="editMyTask(task)"></i> -->
+
+              <div class="nav-item dropdown d-inline" ngbDropdown>
+                <a
+                  class="nav-link dropdown-toggle d-inline"
+                  id="navbarScrollingDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown "
+                  aria-expanded="false"
+                  ngbDropdownToggle
+                >
+                  <i
+                    class="editIcon fa fa-ellipsis-v"
+                    style="cursor: pointer"
+                  ></i>
+                </a>
+                <ul
+                  class="dropPosition dropdown-menu profile-nav-item"
+                  ngbDropdownMenu
+                  aria-labelledby="navbarScrollingDropdown"
+                >
+                  <li
+                    ngbDropdownItem
+                    *ngIf="
+                      task.status != 'Completed' && task.status != 'Closed'
+                    "
+                  >
+                    <a class="dropdown-item" (click)="editMyTeamTask(task)">
+                      <i class="editIcon fa fa-edit" style="cursor: pointer"></i
+                      >&nbsp;&nbsp; Edit</a
+                    >
+                  </li>
+                  <li
+                    ngbDropdownItem
+                    *ngIf="
+                      task.status != 'Completed' &&
+                      task.status != 'Closed' &&
+                      task.status != 'Delegated' &&
+                      task.status != 'Invalid'
+                    "
+                  >
+                    <a class="dropdown-item" (click)="OpenDelegate(task)">
+                      <i
+                        class="editIcon fa fa-exchange"
+                        style="cursor: pointer"
+                      ></i
+                      >&nbsp;&nbsp; Delegate</a
+                    >
+                  </li>
+                  <li ngbDropdownItem>
+                    <a
+                      class="dropdown-item"
+                      (click)="getTaskHistory(task, task.taskId)"
+                    >
+                      <i class="editIcon fa fa-eye" style="cursor: pointer"></i
+                      >&nbsp;&nbsp; Vew Detail</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td class="column-center" colspan="40">No Task found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </p-tabPanel>
+
+
+  <!-- My Raised Task -->
+  <p-tabPanel
+    header="Raised by Me ({{ totalCountOfMyRaised }})"
+    tooltipPosition="left"
+    tooltip="{{ totalCountOfMyRaised }}"
+  >
+    
+      <div class="d-flex row justify-content-between myRaisedfilterClass mt-2" *ngIf="IsShowDDL3">
+        <div class="col">
+          <span class="">
+            <input
+              id="float-input"
+              type="text"
+              pInputText
+              [(ngModel)]="filterMyRaisedTask"
+              id="filter"
+              (keyup.enter)="SearchMyRaisedTask()"
+              placeholder="Task Title"
+              style="font-size: 13px"
+            />
+          </span>
+        </div>
+        <div class="col">
+          <span class="">
+            <p-dropdown
+              inputId="assignedTo"
+              [autoDisplayFirst]="false"
+              [options]="GetAllAssignedTo"
+              [(ngModel)]="selectedUserTo2"
+              optionLabel="userName"
+              optionValue="id"
+            ></p-dropdown>
+          
+          </span>
+        </div>
+        <div class="col">
+          <span class="">
+            <p-dropdown
+              inputId="projectId"
+              [autoDisplayFirst]="false"
+              [options]="AllProjectMaster"
+              [(ngModel)]="selectedMyRaisedProject"
+              optionLabel="projectName"
+              optionValue="projectId"
+            ></p-dropdown>
+          
+          </span>
+        </div>
+        <div class="col">
+          <span class="">
+            <p-dropdown
+              inputId="taskTypeId"
+              [autoDisplayFirst]="false"
+              [options]="AllTaskTypeMaster"
+              [(ngModel)]="selectedMyRaisedTask"
+              optionLabel="taskName"
+              optionValue="taskId"
+            ></p-dropdown>
+            
+          </span>
+        </div>
+        <div class="col">
+          <span class="">
+            <p-dropdown
+              inputId="status"
+              [autoDisplayFirst]="false"
+              [options]="AllMyRaisedStatus"
+              [(ngModel)]="selectedMyRaisedStatus"
+              optionLabel="key"
+              optionValue="status"
+            ></p-dropdown>
+           
+          </span>
+        </div>
+       
+      </div>
+    
+    <div class="d-flex align-items-center justify-content-end filter-btn">
+      <div class="d-flex my-2  justify-content-end"*ngIf="IsShowDDL3">
+        <button
+          class="btn btn-secondary"
+          (click)="getAllRaisedTaskWithPagination(1)"
+          pTooltip="Search"
+          tooltipPosition="top"
+          matTooltipClass="danger-tooltip"
+        >
+          <fa-icon [icon]="faSearch"></fa-icon>
+        </button>
+        <button
+          class="btn btn-light ml-1"
+          (click)="OnResetDDL_Tab3()"
+          pTooltip="Reset"
+          tooltipPosition="top"
+          matTooltipClass="danger-tooltip"
+        >
+          clear
+        </button>
+        <button
+          class="btn btn-danger ml-1"
+          pTooltip="Close Filter"
+          tooltipPosition="top"
+          matTooltipClass="danger-tooltip"
+          (click)="CloseFilter_Tab3()"
+        >
+          <fa-icon [icon]="faTimes"></fa-icon>
+        </button>
+        <!-- <a class="btn btn-primary mx-2" pTooltip="Add Task" tooltipPosition="left" (click)="OpenSelfTask()"
+       ><i class="sidenav-link-icon pi pi-plus"></i></a> -->
+      </div>
+      <button
+        class="btn btn-primary ml-1"
+        (click)="onFilterTab3()"
+        matTooltip="filter"
+        matTooltipClass="danger-tooltip"
+      >
+        Filter
+      </button>
+    </div>
+
+    <div class=" my-2">
+      <mat-card>
+        <mat-card-content>
+      <p-table
+        #dt1
+        [value]="MyraisedTask"
+        [(selection)]="MyraisedTask"
+        selectionMode="single"
+        dataKey="filter"
+        styleClass="p-datatable-gridlines"
+        responsiveLayout="scroll"
+        [rows]="pageSize"
+        [first]="skiprow"
+        [lazy]="true"
+        [totalRecords]="totalCountOfMyRaised"
+        [paginator]="true"
+        [lazy]="true"
+        currentPageReportTemplate="Total {{ totalCountOfMyRaised }} records"
+    
+        [showCurrentPageReport]="true"
+        (onPage)="pagechange2($event)"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Sr. No</th>
+            <th class="column-left">
+              Task Title
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Project
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Action Type
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <!-- <th pSortableColumn="designationName" class="column-left">Description
+            </th> -->
+            <th class="column-left">Description</th>
+            <th class="column-left">
+              Priority
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Assigned To
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Assigned Date
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-center">
+              Excepted Timeline
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <!-- <th pSortableColumn="designationName" class="column-center">Excepted End Date
+            </th> -->
+            <th class="column-center">Actual Timeline</th>
+            <!-- <th pSortableColumn="designationName" class="column-center">Actual End Date
+            </th> -->
+            <th [width]="80" class="column-center">
+              Status
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+
+            <!-- <th pSortableColumn="subType" [width]="150" class="column-center">Active Status
+            </th> -->
+            <th [width]="80" class="column-center">Action</th>
+            <!-- <th [width]="80" class="column-center">Delegate</th> -->
+          </tr>
+          <tr></tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-task let-i="rowIndex">
+          <tr
+            [ngClass]="{
+              overdueTask: task.status == 'Overdue',
+              WIP: task.status == 'WIP' || task.status == 'Work In Progress',
+              pendingTask: task.status == 'Pending',
+              completed: task.status == 'Completed',
+              onHoldTask: task.status == 'On Hold',
+              delegateTask: task.status == 'Delegated'
+            }"
+          >
+            <td class="text-center">
+              {{ i + 1 + pageSize * (currentPage - 1) }}
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ task.title }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{
+                task.projectMaster?.projectName
+              }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{
+                task.taskTypeMaster?.taskName
+              }}</span>
+            </td>
+            <td
+              class="column-left"
+              pTooltip="{{ task.description }}"
+              tooltipPosition="top"
+            >
+              <span class="image-text">
+                {{
+                  task.description.length > 20
+                    ? (task.description | slice : 0 : 20) + ".."
+                    : task.description
+                }}</span
+              >
+            </td>
+            <td class="column-left">
+              <span class="image-text" *ngIf="task.priority == 1">High</span>
+              <span class="image-text" *ngIf="task.priority == 2">Medium</span>
+              <span class="image-text" *ngIf="task.priority == 3">Low</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ task.userManager?.userName }}</span>
+            </td>
+            <td class="column-center">
+              <span class="image-text">{{
+                task.assignedDate | date : "dd-MMM-yyyy HH:mm"
+              }}</span>
+            </td>
+            <td class="column-center">
+              <span class="image-text"
+                >{{ task.exceptedStartDate | date : "dd-MM-yyyy HH:mm" }} -
+                {{ task.exceptedEndDate | date : "dd-MM-yyyy HH:mm" }}</span
+              >
+            </td>
+            <td class="column-center">
+              <span class="image-text"
+                >{{ task.actualStartDate | date : "dd-MM-yyyy HH:mm" }} -
+                {{ task.actualEndDate | date : "dd-MM-yyyy HH:mm" }}</span
+              >
+            </td>
+            <td class="column-center">
+              <span class="image-text">{{ task.status }}</span>
+            </td>
+            <td
+              class="text-primary text-center"
+              pTooltip="Action"
+              tooltipPosition="top"
+            >
+              <div class="nav-item dropdown d-inline" ngbDropdown>
+                <a
+                  class="nav-link dropdown-toggle d-inline"
+                  id="navbarScrollingDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown "
+                  aria-expanded="false"
+                  ngbDropdownToggle
+                >
+                  <i
+                    class="editIcon fa fa-ellipsis-v"
+                    style="cursor: pointer"
+                  ></i>
+                </a>
+                <ul
+                  class="dropdown-menu profile-nav-item"
+                  ngbDropdownMenu
+                  aria-labelledby="navbarScrollingDropdown"
+                >
+                  <li
+                    ngbDropdownItem
+                    *ngIf="
+                      task.status != 'Completed' && task.status != 'Closed'
+                    "
+                  >
+                    <a class="dropdown-item" (click)="editMyRaisedTask(task)">
+                      <i class="editIcon fa fa-edit" style="cursor: pointer"></i
+                      >&nbsp;&nbsp; Edit</a
+                    >
+                  </li>
+                  <li
+                    ngbDropdownItem
+                    *ngIf="
+                      task.status != 'Completed' &&
+                      task.status != 'Closed' &&
+                      task.status != 'Delegated' &&
+                      task.status != 'Invalid'
+                    "
+                  >
+                    <a class="dropdown-item" (click)="OpenDelegate(task)">
+                      <i
+                        class="editIcon fa fa-exchange"
+                        style="cursor: pointer"
+                      ></i
+                      >&nbsp;&nbsp; Delegate</a
+                    >
+                  </li>
+                  <li ngbDropdownItem>
+                    <a
+                      class="dropdown-item"
+                      (click)="getTaskHistory(task, task.taskId)"
+                    >
+                      <i class="editIcon fa fa-eye" style="cursor: pointer"></i
+                      >&nbsp;&nbsp; View Detail</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td class="column-center" colspan="40">No Task found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </p-tabPanel>
+
+  <!-- Delegated Task -->
+  <p-tabPanel
+    header="Delegated to Me ({{ totalCountOfDelegateForMe }})"
+    tooltipPosition="left"
+    tooltip="{{ totalCountOfDelegateForMe }}"
+  >
+    <div class="d-flex justify-content-end filterForDelegated filter_data p-0">
+      <div class="d-flex row justify-content-end">
+        <div class=" ">
+          <div class="col">
+            
+            <span class="">
+              
+              <p-dropdown
+                inputId="dropdown"
+                [autoDisplayFirst]="false"
+                [options]="delegatedTaskStatus"
+                [(ngModel)]="delegatedTaskStatusFilter"
+                optionLabel="key"
+                optionValue="value"
+              ></p-dropdown>
+            </span>
+            <label
+              class="mx-2"
+              for="From"
+              *ngIf="delegatedTaskStatusFilter != 'Requested'"
+              ></label
+            >
+          </div>
+          <div class="col">
+            
+          <p-calendar
+            class=""
+            *ngIf="delegatedTaskStatusFilter != 'Requested'"
+            dateFormat="dd/mm/yy"
+            [showButtonBar]="true"
+            placeholder="dd/mm/yyyy"
+            [(ngModel)]="delegatedTaskFromDateFilter"
+            inputId="From"
+            onkeydown="return false"
+          >
+          </p-calendar>
+          <label
+            class="mx-2"
+            *ngIf="delegatedTaskStatusFilter != 'Requested'"
+            for="To"
+            >
+          </label>
+          </div>
+          <div class="col">
+            
+          <p-calendar
+            *ngIf="delegatedTaskStatusFilter != 'Requested'"
+            dateFormat="dd/mm/yy"
+            [showButtonBar]="true"
+            placeholder="dd/mm/yyyy"
+            [(ngModel)]="delegatedTaskToDateFilter"
+            inputId="To"
+            onkeydown="return false"
+          >
+          </p-calendar>
+          </div>
+       
+        </div>
+      </div>
+      <div class="class">
+        <button
+        class="btn btn-primary mx-2"
+        (click)="getMyDelegatedTask(1)"
+        matTooltip="Search"
+        matTooltipClass="danger-tooltip"
+      >
+        <fa-icon [icon]="faSearch"></fa-icon>
+      </button>
+      </div>
+    </div>
+    
+    <!-- </div> -->
+    <div class="container-fluid">
+      <div class=" my-2">
+        <mat-card>
+          <mat-card-content>
+        <p-table
+          #dt1
+          [value]="MyDelegatedTask"
+          [(selection)]="MyDelegatedTask"
+          selectionMode="single"
+          dataKey="filter"
+          styleClass="p-datatable-gridlines"
+          responsiveLayout="scroll"
+          [rows]="pageSize"
+          [first]="skiprow"
+          [lazy]="true"
+          [totalRecords]="totalCountOfDelegateForMe"
+          [paginator]="true"
+          [lazy]="true"
+          currentPageReportTemplate="Total {{
+            totalCountOfDelegateForMe
+          }} records"
+         
+          [showCurrentPageReport]="true"
+          (onPage)="pagechange3($event)"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Sr. No</th>
+              <th class="column-left">Task Title</th>
+              <th class="column-left">Transfer To</th>
+              <th class="column-left">Project</th>
+              <th class="column-left">Task Description</th>
+              <th class="column-center">Expected Timeline</th>
+              <th class="column-center">Actual Timeline</th>
+              <th class="column-center">Task Status</th>
+              <th class="column-center">Remarks</th>
+              <th [width]="80" class="column-center" *ngIf="showAction">
+                Action
+              </th>
+            </tr>
+            <tr></tr>
+          </ng-template>
+          <ng-template
+            pTemplate="body"
+            let-editing="editing"
+            let-task
+            let-i="rowIndex"
+          >
+            <tr [pEditableRow]="task">
+              <td class="text-center">
+                {{ i + 1 + pageSize * (currentPage - 1) }}
+              </td>
+              <td class="column-left">
+                <span class="image-text">{{
+                  task.taskTransaction?.title
+                }}</span>
+              </td>
+              <td class="column-left">
+                <span class="image-text">{{ task.transferTo }}</span>
+              </td>
+              <td class="column-left">
+                <span class="image-text">{{
+                  task.taskTransaction?.projectMaster?.projectName
+                }}</span>
+              </td>
+              <td
+                class="column-left"
+                pTooltip="{{ task.taskTransaction?.description }}"
+                tooltipPosition="top"
+              >
+                <span class="image-text">
+                  {{
+                    task.taskTransaction?.description.length > 20
+                      ? (task.taskTransaction?.description | slice : 0 : 20) +
+                        ".."
+                      : task.taskTransaction?.description
+                  }}</span
+                >
+              </td>
+              <td class="column-center">
+                <span class="image-text"
+                  >{{
+                    task.taskTransaction?.exceptedStartDate
+                      | date : "dd-MM-yyyy HH:mm"
+                  }}
+                  -
+                  {{
+                    task.taskTransaction?.exceptedEndDate
+                      | date : "dd-MM-yyyy HH:mm"
+                  }}</span
+                >
+              </td>
+              <td class="column-center">
+                <span class="image-text"
+                  >{{
+                    task.taskTransaction?.actualStartDate
+                      | date : "dd-MM-yyyy HH:mm"
+                  }}
+                  -
+                  {{
+                    task.taskTransaction?.actualEndDate
+                      | date : "dd-MM-yyyy HH:mm"
+                  }}</span
+                >
+              </td>
+              <td class="column-center">
+                <span class="image-text">{{
+                  task.taskTransaction?.status
+                }}</span>
+              </td>
+              <td class="column-center">
+                <span class="image-text">{{ task.remarks }}</span>
+              </td>
+              <div class="inline-block">
+                <td class="column-center" *ngIf="task.status == 'Requested'">
+                  <!-- <div class="col-2 text-end" *ngIf="task.status == 'Requested'"> -->
+
+                  <button
+                    tabindex="8"
+                    pTooltip="Accept"
+                    tooltipPosition="top"
+                    class="btn btn-success m-2"
+                    style="width: 55%"
+                    (click)="saveDelegate(task, 'Accepted')"
+                    pButton
+                    icon="pi pi-check"
+                  ></button>
+                  <!-- </span> -->
+                  <!-- <span> -->
+                  <button
+                    class="float-right"
+                    tabindex="10"
+                    pTooltip="Reject"
+                    tooltipPosition="top"
+                    class="btn btn-danger m-2"
+                    style="width: 55%"
+                    (click)="saveDelegate(task, 'Rejected')"
+                    pButton
+                    icon="pi pi-times"
+                  ></button>
+
+                  <!-- </div> -->
+                  <!-- <p-cellEditor> -->
+                  <!-- <ng-template pTemplate="input"> -->
+                  <!-- <button class="p-button" SaveEditableRow (click)="saveStatusOfMyTeam(i+1,task,task)" pButton icon="pi pi-check"></button>
+                    <button class="p-button " style="cursor: pointer; color: red;" (click)="editingStatus = false" pRipple pCancelEditableRow pButton icon="pi pi-times"></button> -->
+                  <!-- <select name="request" class="form-control role-select form-select" id="request"
+                      [(ngModel)]="statusRowValue">
+                      <option *ngFor="let project of statusRequest" [ngValue]="project.status">
+                        {{project.status}}</option>
+                    </select>  -->
+                  <!-- <div *ngIf="isAccept">
+                    <i style="cursor: pointer;" pRipple pSaveEditableRow class="fa fa-check mt-2 text-success"
+                      (click)="saveStatusOfMyTeam(task)"></i> &nbsp; &nbsp;
+                    <i style="cursor: pointer;" (click)="editingStatus = false" pRipple pCancelEditableRow
+                      class="fa fa-times mt-2 text-danger"></i></div> -->
+                  <!-- </ng-template> -->
+                  <ng-template pTemplate="output">
+                    {{ task.status }} &nbsp;
+                    <i
+                      style="cursor: pointer"
+                      pRipple
+                      pInitEditableRow
+                      class="fa fa-pencil text-primary"
+                    ></i>
+                  </ng-template>
+                  <!-- </p-cellEditor> -->
+                </td>
+              </div>
+              <!-- <td class="text-primary text-center" title="Edit">
+
+                <div class="nav-item dropdown d-inline" ngbDropdown>
+                  <a class="nav-link dropdown-toggle d-inline" id="navbarScrollingDropdown" role="button"
+                    data-bs-toggle="dropdown " aria-expanded="false" ngbDropdownToggle>
+                    <i class="editIcon fa fa-ellipsis-v" style="cursor: pointer;"></i>
+                  </a>
+                  <ul class="dropdown-menu profile-nav-item" ngbDropdownMenu
+                    aria-labelledby="navbarScrollingDropdown">
+                    <li ngbDropdownItem><a class="dropdown-item" (click)="editMyTask(task)">
+                        <i class="editIcon fa fa-edit" style="cursor: pointer;"></i>&nbsp;&nbsp; Edit</a></li>
+                    <li ngbDropdownItem><a class="dropdown-item" (click)="OpenDelegate(task)">
+                        <i class="editIcon fa fa-exchange" style="cursor: pointer;"></i>&nbsp;&nbsp; Delegate</a></li>
+                    <li ngbDropdownItem><a class="dropdown-item" (click)="getTaskHistory(task,task.taskId)">
+                        <i class="editIcon fa fa-eye" style="cursor: pointer;"></i>&nbsp;&nbsp; Vew Detail</a></li>
+                  </ul>
+                </div>
+              </td> -->
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td class="column-center" colspan="40">No Task found.</td>
+            </tr>
+          </ng-template>
+        </p-table>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <!-- <div class="row">
+        <div class="col-md-4 col-sm-6 col-12 my-3" *ngFor="let item of MyDelegatedTask">
+          <p-card header="{{item.taskTransaction?.title}}">
+            <ul style="list-style: none;">
+              <li>Transfer by : {{item.raisedBy}}</li>
+              <li>Project : {{item.taskTransaction?.projectMaster?.projectName}}</li>
+              <li>Task Description : {{item.taskTransaction?.description}}</li>
+              <li>Task Expected Start Date : {{item.taskTransaction?.exceptedStartDate | date: 'dd-MM-yyyy'}}</li>
+              <li>Task Expected End Date : {{item.taskTransaction?.exceptedEndDate | date: 'dd-MM-yyyy'}}</li>
+              <li>Task Status : {{item.taskTransaction?.status}}</li>
+              <li>Remarks : {{item.remarks}}</li>
+            </ul>
+            <div class="text-end" *ngIf="item.status == 'Requested'">
+              <button tabindex="8" class="btn btn-success m-2" (click)="saveDelegate(item,'Accepted')">Accept</button>
+              <button tabindex="10" class="btn btn-danger m-2" (click)="saveDelegate(item,'Rejected')">Reject</button>
+            </div>
+          </p-card>
+        </div>
+        <div class="text-center mt-5" *ngIf="MyDelegatedTask?.length == 0">
+          <h1>No Delegated Task for You.</h1>
+        </div>
+      </div> -->
+    </div>
+  </p-tabPanel>
+
+  <!-- Raised by Me Delegated Task -->
+  <p-tabPanel
+    header="Delegated by Me ({{ totalCountOfDelegateByMe }})"
+    tooltipPosition="left"
+    tooltip="{{ totalCountOfDelegateByMe }}"
+  >
+    <div class="d-flex justify-content-end filterForDelegated filter_data p-0">
+      <div class="d-flex row justify-content-end">
+     
+          <div class="col">
+            
+          <span class="">
+          
+            <p-dropdown
+              inputId="dropdown"
+              [autoDisplayFirst]="false"
+              [options]="delegatedTaskStatus"
+              optionValue="value"
+              [(ngModel)]="myRaisedDelegatedTaskStatusFilter"
+              optionLabel="key"
+            ></p-dropdown>
+          </span>
+          </div>
+          <div class="col">
+            
+          <p-calendar
+            class="ml-1"
+            dateFormat="dd/mm/yy"
+            [showButtonBar]="true"
+            placeholder="dd/mm/yyyy"
+            [(ngModel)]="myRaisedDelegatedTaskFromDateFilter"
+            inputId="From"
+            onkeydown="return false"
+          ></p-calendar>
+          <label class="mx-2" for="To"> </label>
+          </div>
+          <div class="col">
+            
+          <p-calendar
+            dateFormat="dd/mm/yy"
+            [showButtonBar]="true"
+            placeholder="dd/mm/yyyy"
+            [(ngModel)]="myRaisedDelegatedTaskToDateFilter"
+            inputId="To"
+            onkeydown="return false"
+          ></p-calendar>
+
+          </div>
+        
+      </div>
+      <div class="class">
+
+        <button
+          class="btn btn-primary mx-2"
+          (click)="getAllRaisedDelegateTaskByMe(1)"
+          matTooltip="Search"
+          matTooltipClass="danger-tooltip"
+        >
+          <fa-icon [icon]="faSearch"></fa-icon>
+        </button>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class=" my-2">
+        <mat-card>
+          <mat-card-content>
+        <p-table
+          #dt1
+          [value]="myraisedDelegatedtask"
+          [(selection)]="myraisedDelegatedtask"
+          selectionMode="single"
+          dataKey="filter"
+          styleClass="p-datatable-gridlines"
+          responsiveLayout="scroll"
+          [rows]="pageSize"
+          [first]="skiprow"
+          [lazy]="true"
+          [totalRecords]="totalCountOfDelegateByMe"
+          [paginator]="true"
+          currentPageReportTemplate="Total {{
+            totalCountOfDelegateByMe
+          }} records"
+        
+          [showCurrentPageReport]="true"
+          (onPage)="pagechange4($event)"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Sr. No</th>
+              <th class="column-left">
+                Task Title
+                <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+              </th>
+              <th class="column-left">Transfer To</th>
+              <th class="column-left">Project</th>
+              <th class="column-left">Task Description</th>
+              <th class="column-center">Expected Timeline</th>
+              <th class="column-center">Actual Timeline</th>
+              <th class="column-center">Task Status</th>
+              <th class="column-center">Remarks</th>
+              <!-- <th [width]="80" class="column-center">Action</th> -->
+            </tr>
+            <tr></tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-task let-i="rowIndex">
+            <tr>
+              <td class="text-center">
+                {{ i + 1 + pageSize * (currentPage - 1) }}
+              </td>
+              <td class="column-left">
+                <span class="image-text">{{
+                  task.taskTransaction?.title
+                }}</span>
+              </td>
+              <td class="column-left">
+                <span class="image-text">{{ task.transferTo }}</span>
+              </td>
+              <td class="column-left">
+                <span class="image-text">{{
+                  task.taskTransaction?.projectMaster?.projectName
+                }}</span>
+              </td>
+              <td
+                class="column-left"
+                pTooltip="{{ task.taskTransaction?.description }}"
+                tooltipPosition="top"
+              >
+                <span class="image-text">
+                  {{
+                    task.taskTransaction?.description.length > 20
+                      ? (task.taskTransaction?.description | slice : 0 : 20) +
+                        ".."
+                      : task.taskTransaction?.description
+                  }}</span
+                >
+              </td>
+              <td class="column-center">
+                <span class="image-text"
+                  >{{
+                    task.taskTransaction?.exceptedStartDate
+                      | date : "dd-MM-yyyy HH:mm"
+                  }}
+                  -
+                  {{
+                    task.taskTransaction?.exceptedEndDate
+                      | date : "dd-MM-yyyy HH:mm"
+                  }}</span
+                >
+              </td>
+              <td class="column-center">
+                <span class="image-text"
+                  >{{
+                    task.taskTransaction?.actualStartDate
+                      | date : "dd-MM-yyyy HH:mm"
+                  }}
+                  -
+                  {{
+                    task.taskTransaction?.actualEndDate
+                      | date : "dd-MM-yyyy HH:mm"
+                  }}</span
+                >
+              </td>
+              <td class="column-center">
+                <span class="image-text">{{
+                  task.taskTransaction?.status
+                }}</span>
+              </td>
+              <td class="column-center">
+                <span class="image-text">{{ task.remarks }}</span>
+              </td>
+              <!-- <td class="text-primary text-center" title="Edit">
+
+                <div class="nav-item dropdown d-inline" ngbDropdown>
+                  <a class="nav-link dropdown-toggle d-inline" id="navbarScrollingDropdown" role="button"
+                    data-bs-toggle="dropdown " aria-expanded="false" ngbDropdownToggle>
+                    <i class="editIcon fa fa-ellipsis-v" style="cursor: pointer;"></i>
+                  </a>
+                  <ul class="dropdown-menu profile-nav-item" ngbDropdownMenu
+                    aria-labelledby="navbarScrollingDropdown">
+                    <li ngbDropdownItem><a class="dropdown-item" (click)="editMyTask(task)">
+                        <i class="editIcon fa fa-edit" style="cursor: pointer;"></i>&nbsp;&nbsp; Edit</a></li>
+                    <li ngbDropdownItem><a class="dropdown-item" (click)="OpenDelegate(task)">
+                        <i class="editIcon fa fa-exchange" style="cursor: pointer;"></i>&nbsp;&nbsp; Delegate</a></li>
+                    <li ngbDropdownItem><a class="dropdown-item" (click)="getTaskHistory(task,task.taskId)">
+                        <i class="editIcon fa fa-eye" style="cursor: pointer;"></i>&nbsp;&nbsp; Vew Detail</a></li>
+                  </ul>
+                </div>
+              </td> -->
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td class="column-center" colspan="40">No Task found.</td>
+            </tr>
+          </ng-template>
+        </p-table>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <!-- <div class="row">
+        <div class="col-md-4 col-sm-6 col-12 my-3" *ngFor="let item of myraisedDelegatedtask">
+          <p-card header="{{item.taskTransaction?.title}}">
+            <ul style="list-style: none;">
+              <li>Transfer To : {{item.transferTo}}</li>
+              <li>Project : {{item.taskTransaction?.projectMaster?.projectName}}</li>
+              <li>Task Description : {{item.taskTransaction?.description}}</li>
+              <li>Task Expected Start Date : {{item.taskTransaction?.exceptedStartDate | date: 'dd-MM-yyyy'}}</li>
+              <li>Task Expected End Date : {{item.taskTransaction?.exceptedEndDate | date: 'dd-MM-yyyy'}}</li>
+              <li>Task Actual Start Date : <span class="image-text"
+                  *ngIf="item.taskTransaction?.actualStartDate != null">{{item.taskTransaction?.actualStartDate |
+                  date:'dd-MM-yyyy'}}</span>
+                <span class="image-text" *ngIf="item.taskTransaction?.actualStartDate == null">Task Not Started</span>
+              </li>
+              <li>Task Actual End Date : <span class="image-text"
+                  *ngIf="item.actualEndDate != null">{{item.taskTransaction?.actualEndDate | date:'dd-MM-yyyy'}}</span>
+                <span class="image-text" *ngIf="item.taskTransaction?.actualEndDate == null">Task Not Started</span>
+              </li>
+              <li>Task Status : {{item.taskTransaction?.status}}</li>
+              <li>Remarks : {{item.remarks}}</li>
+            </ul>
+          </p-card>
+        </div>
+        <div class="text-center mt-5" *ngIf="myraisedDelegatedtask?.length == 0">
+          <h1>No Delegated Task.</h1>
+        </div>
+      </div> -->
+    </div>
+  </p-tabPanel>
+</p-tabView>
+
+<!-- Dialoge Box -->
+<!-- TaskForm -->
+<p-dialog
+  header="{{ title }}"
+  [(visible)]="display"
+  [style]="{width: '40vw'}"
+  [draggable]="false"
+  [keepInViewport]="true"
+  [modal]="true"
+  styleClass="dialogBox"
+>
+  <div class="container mt-2">
+    <div class="row">
+      <div class="col-md-12">
+        <form autocomplete="off" [formGroup]="TaskForm" autocomplete="off">
+          <div class="form-group">
+            <!-- Row 1 -->
+            <div class="form-group row mb-0 mt-1">
+              <div class="col-sm-6 my-1">
+                <label for="title"
+                  >Task Title <sup class="text-danger">*</sup></label
+                >
+                <input
+                  type="text"
+                  tabindex="0"
+                  id="title"
+                  autofocus
+                  class="form-control"
+                  placeholder=""
+                  formControlName="title"
+                  [ngClass]="{ 'is-invalid': submitted && f['title'].errors }"
+                  value=""
+                />
+                <div
+                  *ngIf="submitted && f['title'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['title'].errors['required']">
+                    <small> Task Title is required</small>
+                  </div>
+                  <div
+                    *ngIf="
+                      f['title'].hasError('whitespace') &&
+                      !f['title'].errors['required']
+                    "
+                  >
+                    <small>Blank space not allowed</small>
+                  </div>
+                  <div
+                    *ngIf="
+                      f['title'].errors['minlength'] &&
+                      !f['title'].hasError('whitespace')
+                    "
+                  >
+                    <small> Task Title must be at least 3 characters</small>
+                  </div>
+                  <div
+                    *ngIf="
+                      f['title'].errors['maxlength'] &&
+                      !f['title'].errors['minlength'] &&
+                      !f['title'].hasError('whitespace')
+                    "
+                  >
+                    <small>Task Title must not exceed 50 characters</small>
+                  </div>
+                  <!-- <div *ngIf="f['title'].errors['minlength']">
+                    <small>
+                      Task Title must be at least 2 characters.
+                    </small>
+                  </div>
+                  <div *ngIf="f['title'].errors['maxlength']">
+                    <small>
+                      Task Title must not exceed 30 characters.
+                    </small>
+                  </div>
+                  <div *ngIf="f['title'].errors['pattern']">
+                    <small>
+                      Task Title should contain only A-Za-z0-9()*%!_@./#&+:=-
+                    </small>
+                    </div> -->
+                </div>
+              </div>
+              <div class="col-sm-6 my-1">
+                <label for="projectId">Project<sup>*</sup></label>
+                <br />
+                <select
+                  name="projectId"
+                  tabindex="7"
+                  class="form-control role-select form-select"
+                  id="projectId"
+                  formControlName="projectId"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['projectId'].errors
+                  }"
+                  placeholder="--Choose Option--"
+                >
+                  <option value="" disabled>Choose Project</option>
+                  <option
+                    *ngFor="let project of projectMaster"
+                    [ngValue]="project.projectId"
+                  >
+                    {{ project.projectName }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="submitted && f['projectId'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['projectId'].errors['required']">
+                    <small> Project is required</small>
+                  </div>
+                </div>
+              </div>
+              <!-- Row 2 -->
+              <div class="col-sm-6 my-1">
+                <label for="taskTypeId"
+                  >Action Type <sup class="text-danger">*</sup></label
+                >
+                <br />
+                <select
+                  name="taskTypeId"
+                  tabindex="7"
+                  class="form-control role-select form-select"
+                  id="taskTypeId"
+                  formControlName="taskTypeId"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['taskTypeId'].errors
+                  }"
+                  placeholder="--Choose Option--"
+                >
+                  <option value="" disabled>Choose Action Type</option>
+                  <option
+                    *ngFor="let project of taskTypeMaster"
+                    [ngValue]="project.taskId"
+                  >
+                    {{ project.taskName }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="submitted && f['taskTypeId'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['taskTypeId'].errors['required']">
+                    <small> Action Type is required</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 my-1">
+                <label for="priority"
+                  >Priority <sup class="text-danger">*</sup></label
+                >
+                <br />
+                <select
+                  name="priority"
+                  tabindex="7"
+                  class="form-control role-select form-select"
+                  id="priority"
+                  formControlName="priority"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['priority'].errors
+                  }"
+                  placeholder="--Choose Option--"
+                >
+                  <option value="" disabled>Choose Priority</option>
+                  <option
+                    *ngFor="let project of AllPriority"
+                    [ngValue]="project.value"
+                  >
+                    {{ project.key }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="submitted && f['priority'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['priority'].errors['required']">
+                    <small> Priority is required</small>
+                  </div>
+                </div>
+              </div>
+              <!-- Row 3 for team task -->
+              <div
+                class="col-sm-6 my-1"
+                *ngIf="!isSelfAssign && SaveButtonTitle == 'Add'"
+              >
+                <label for="assignedTo"
+                  >Assign To<sup class="text-danger">*</sup></label
+                >
+                <br />
+                <select
+                  name="assignedTo"
+                  tabindex="7"
+                  class="form-control role-select form-select"
+                  id="assignedTo"
+                  formControlName="assignedTo"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['assignedTo'].errors
+                  }"
+                  placeholder="--Choose Option--"
+                >
+                  <option value="" disabled>Choose Emp to Assign</option>
+                  <option
+                    *ngFor="let project of AllAssignToUsersForTeam"
+                    [ngValue]="project.id"
+                  >
+                    {{ project.firstName }} {{ project.lastName }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="submitted && f['assignedTo'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['assignedTo'].errors['required']">
+                    <small> Employee is required</small>
+                  </div>
+                </div>
+              </div>
+              <!-- update team task -->
+              <div
+                class="col-sm-6 my-1"
+                *ngIf="!isTeamAssign && SaveButtonTitle == 'Update'"
+              >
+                <label for="assignedTo"
+                  >Assign To<sup class="text-danger">*</sup></label
+                >
+                <br />
+                <select
+                  name="assignedTo"
+                  tabindex="7"
+                  class="form-control role-select form-select"
+                  id="assignedTo"
+                  formControlName="assignedTo"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['assignedTo'].errors
+                  }"
+                  placeholder="--Choose Option--"
+                >
+                  <option value="" disabled>Choose Emp to Assign</option>
+                  <option
+                    *ngFor="let project of AllAssignToUsersForTeam"
+                    [ngValue]="project.id"
+                  >
+                    {{ project.firstName }} {{ project.lastName }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="submitted && f['assignedTo'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['assignedTo'].errors['required']">
+                    <small> Employee is required</small>
+                  </div>
+                </div>
+              </div>
+              <!-- Row 3 visible only for raisedby me  -->
+              <div
+                class="col-sm-6 my-1"
+                *ngIf="!isRaisedByAssign && SaveButtonTitle != 'Add'"
+              >
+                <label for="assignedTo">Assign To</label>
+                <br />
+                <select
+                  name="assignedTo"
+                  tabindex="7"
+                  class="form-control role-select form-select"
+                  id="assignedTo"
+                  formControlName="assignedTo"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['assignedTo'].errors
+                  }"
+                  placeholder="--Choose Option--"
+                  (change)="ChangeAssignedTo()"
+                >
+                  <option value="" selected>Choose Emp to Assign</option>
+                  <option
+                    *ngFor="let project of AllAssignToUsersForTeam"
+                    [ngValue]="project.id"
+                  >
+                    {{ project.firstName }} {{ project.lastName }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="submitted && f['assignedTo'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['assignedTo'].errors['required']">
+                    <small> Employee is required</small>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="col-sm-6 my-1" *ngIf="SaveButtonTitle != 'Add'">
+                <label for="status">Status <sup>*</sup></label>
+                <br>
+                <select name="status" tabindex="7" class="form-control role-select form-select" id="status"
+                  formControlName="status" [ngClass]="{ 'is-invalid': submitted && f['status'].errors }">
+                  <option value='' disabled> Choose Task Status </option>
+                  <option *ngFor="let project of AllStatus" [ngValue]="project.status">
+                    {{project.status}}</option>
+                </select>
+                <div *ngIf="submitted && f['status'].errors" class="invalid-feedback">
+                  <div *ngIf="f['status'].errors['required']">
+                    <small class="text-danger"> * Status is required</small>
+                  </div>
+                </div>
+              </div> -->
+
+              <div class="col-sm-6 my-1">
+                <label for="exceptedStartDate"
+                  >Expected Start Date <sup *ngIf="isStartDt">*</sup></label
+                >
+                <input
+                  type="datetime-local"
+                  tabindex="7"
+                  id="exceptedStartDate"
+                  autofocus
+                  class="form-control"
+                  placeholder=""
+                  formControlName="exceptedStartDate"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['exceptedStartDate'].errors
+                  }"
+                  value=""
+                  onkeydown="return false"
+                />
+                <div
+                  *ngIf="submitted && f['exceptedStartDate'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['exceptedStartDate'].errors['required']">
+                    <small> Expected Start Date is required</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-6 my-1">
+                <label for="exceptedEndDate"
+                  >Expected End Date <sup *ngIf="isEndDt">*</sup></label
+                >
+                <input
+                  type="datetime-local"
+                  tabindex="0"
+                  id="exceptedEndDate"
+                  class="form-control"
+                  placeholder=""
+                  formControlName="exceptedEndDate"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['exceptedEndDate'].errors
+                  }"
+                  value=""
+                  onkeydown="return false"
+                />
+                <div
+                  *ngIf="submitted && f['exceptedEndDate'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['exceptedEndDate'].errors['required']">
+                    <small>Expected End Date is required</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-12 my-1">
+                <label for="description">Description </label>
+                <textarea
+                  id="description"
+                  class="form-control"
+                  formControlName="description"
+                  [rows]="4"
+                  [cols]="50"
+                  [ngClass]="{
+                    'is-invalid': submitted && f['description'].errors
+                  }"
+                ></textarea>
+                <div
+                  *ngIf="submitted && f['description'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['description'].errors['required']">
+                    <small class="text-danger">Description is required</small>
+                  </div>
+                  <div *ngIf="f['description'].errors['minlength']">
+                    <small> Description must be at least 4 characters </small>
+                  </div>
+                  <div *ngIf="f['description'].errors['maxlength']">
+                    <small> Description must not exceed 1000 characters.</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="form-group row my-2"
+              *ngIf="SaveButtonTitle != 'Add'"
+              hidden
+            >
+              <div class="col-12">
+                <label class="form-check-inline">
+                  <input
+                    class="form-check-input"
+                    id="isActive"
+                    type="radio"
+                    name="isActive"
+                    [value]="true"
+                    formControlName="isActive"
+                  />
+                  Active
+                </label>
+                <label class="form-check-inline">
+                  <input
+                    class="form-check-input"
+                    id="Inactive"
+                    type="radio"
+                    name="isActive"
+                    [value]="false"
+                    formControlName="isActive"
+                  />
+                  Inactive
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="container model-footer">
+    <button
+      tabindex="8"
+      class="btn btn-primary m-2"
+      (click)="updateTask()"
+      *ngIf="isUpdateMyTask"
+    >
+      {{ SaveButtonTitle }}
+    </button>
+    <button
+      tabindex="8"
+      class="btn btn-primary m-2"
+      (click)="updateRaisedTask()"
+      *ngIf="isUpdateRaisedTask"
+    >
+      {{ SaveButtonTitle }}
+    </button>
+    <button
+      *ngIf="SaveButtonTitle == 'Add'"
+      tabindex="9"
+      class="btn btn-danger m-2"
+      (click)="onReset()"
+    >
+      Reset
+    </button>
+    <button tabindex="10" class="btn button m-2" (click)="display = false">
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- DelegateForm -->
+<p-dialog
+  [style]="{ width: '20vw' }"
+  header="Delegate Task"
+  [(visible)]="displayDelegate"
+  [draggable]="false"
+  [keepInViewport]="true"
+  [modal]="true"
+  styleClass="dialogBox"
+>
+  <div class="container my-2">
+    <div class="row">
+      <div class="col-md-12">
+        <form
+          autocomplete="off"
+          [formGroup]="DelegateForm"
+          autocomplete="off"
+          (keydown.enter)="updateDelegatedTask()"
+        >
+          <div class="form-group">
+            <div class="col-md-12 my-1">
+              <!-- <select name="transferToId" formControlName="transferToId" class="form-control role-select form-select"
+                id="transferToId" placeholder="--Choose Option--"
+                [ngClass]="{ 'is-invalid': submited2 && f1['transferToId'].errors }" autofocus required>
+                <option value='' disabled> Select Emp to Delegate </option>
+                <option *ngFor="let del of GetAllAssignedBy" [ngValue]="del.id">
+                  {{del.firstName}} {{del.lastName}}</option>
+              </select>
+              <div *ngIf="submited2 && f1['transferToId'].errors" class="invalid-feedback">
+                <div *ngIf="f1['transferToId'].errors['required']">
+                  <small class="text-danger">Employee Name is required</small>
+                </div>
+              </div>
+              <label for="transferToId">Select Emp to delegate</label> -->
+              <label for="transferToId"
+                >Select Emp to delegate<sup>*</sup></label
+              >
+              <br />
+              <select
+                name="transferToId"
+                tabindex="7"
+                class="form-control role-select form-select"
+                id="transferToId"
+                formControlName="transferToId"
+                [ngClass]="{
+                  'is-invalid': submited2 && f1['transferToId'].errors
+                }"
+                placeholder="--Choose Option--"
+              >
+                <option value="" disabled>Select Emp to Delegate</option>
+                <option *ngFor="let del of GetAllAssignedBy" [ngValue]="del.id">
+                  {{ del.firstName }} {{ del.lastName }}
+                </option>
+              </select>
+              <div
+                *ngIf="submited2 && f1['transferToId'].errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="f1['transferToId'].errors['required']">
+                  <small> Project is required</small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group mt-3">
+            <div class="col-md-12 my-1">
+              <label for="remarkId">Remark<sup>*</sup></label>
+              <br />
+              <input
+                type="text"
+                formControlName="remarks"
+                id="remarkId"
+                class="form-control"
+                placeholder="Remarks"
+                [ngClass]="{ 'is-invalid': submited2 && f1['remarks'].errors }"
+                required
+              />
+
+              <div
+                *ngIf="submited2 && f1['remarks'].errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="f1['remarks'].errors['required']">
+                  <small class="text-danger">Remark is required</small>
+                </div>
+                <div
+                  *ngIf="
+                    f1['remarks'].hasError('whitespace') &&
+                    !f1['remarks'].errors['required']
+                  "
+                >
+                  <small>Blank space not allowed</small>
+                </div>
+                <!-- <div *ngIf="f['title'].errors['minlength'] && !f['title'].hasError('whitespace')">
+                    <small> Task Title must be at least 3 characters</small>
+                   </div>
+                   <div *ngIf="f['title'].errors['maxlength'] && !f['title'].errors['minlength'] && !f['title'].hasError('whitespace')">
+                    <small>Task Title must not exceed 50 characters</small>
+                  </div> -->
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="container model-footer">
+    <button class="btn btn-primary m-2" (click)="updateDelegatedTask()">
+      Delegate
+    </button>
+    <button class="btn btn-secondary m-2" (click)="displayDelegate = false">
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- Remark Pop Up on Reject -->
+<p-dialog
+  [style]="{ width: '20vw' }"
+  header="Remark"
+  [(visible)]="rejectRemarkShow"
+  [modal]="true"
+  [draggable]="false"
+  (onHide)="delegateRemarksClose()"
+>
+  <div class="col-md-12 my-1" *ngIf="rejectRemarkShow">
+    <label for="remarks" style="font-size: 12px">Remark<sup>*</sup></label>
+    <br />
+    <input
+      type="text"
+      id="remarks"
+      [(ngModel)]="rejectRemarks"
+      class="form-control"
+      required
+    />
+    <div *ngIf="submited2">
+      <div *ngIf="rejectRemarks.length === 0">
+        <small class="text-danger" style="font-size: 12px"
+          >Remark is required</small
+        >
+      </div>
+    </div>
+  </div>
+  <div class="container model-footer">
+    <button class="btn btn-primary m-2" (click)="remarkPopUpSave()">
+      Reject
+    </button>
+    <button class="btn btn-secondary m-2" (click)="delegateRemarksClose()">
+      Close
+    </button>
+  </div>
+</p-dialog>
+
+<!-- Task History -->
+<p-dialog
+  header="Task Details"
+  [(visible)]="showTaskHistory"
+  [modal]="true"
+  [style]="{width: '40vw'}"
+  [draggable]="false"
+  style="height: 10px"
+>
+  <div class="card1 mt-2">
+    <!-- [value]="taskHistoryDetail" [(selection)]="taskHistoryDetail" -->
+    <table class="mat-table">
+      <tr>
+        <th class="mat-header-cell">Task Title</th>
+        <td class="mat-cell">{{ taskDetails?.title }}</td>
+      </tr>
+      <tr>
+        <th class="mat-header-cell">Project</th>
+        <td class="mat-cell">{{ taskDetails?.projectMaster?.projectName }}</td>
+      </tr>
+      <tr>
+        <th class="mat-header-cell">Task Type</th>
+        <td class="mat-cell">{{ taskDetails?.taskTypeMaster?.taskName }}</td>
+      </tr>
+      <tr>
+        <th class="mat-header-cell">Description</th>
+        <td class="text-style">{{ taskDetails?.description }}</td>
+      </tr>
+      <tr>
+        <th class="mat-header-cell">Priority</th>
+        <td class="mat-cell">
+          <span class="image-text" *ngIf="taskDetails?.priority == 1"
+            >High</span
+          >
+          <span class="image-text" *ngIf="taskDetails?.priority == 2"
+            >Medium</span
+          >
+          <span class="image-text" *ngIf="taskDetails?.priority == 3">Low</span>
+        </td>
+      </tr>
+      <tr>
+        <th class="mat-header-cell">Assign By</th>
+        <td class="mat-cell">{{ taskDetails?.assignedBy }}</td>
+      </tr>
+      <tr>
+        <th class="mat-header-cell">Assign To</th>
+        <td class="mat-cell">{{ taskDetails?.assignedTo }}</td>
+      </tr>
+      <tr>
+        <th class="mat-header-cell">Status</th>
+        <td class="mat-cell">{{ taskDetails?.status }}</td>
+      </tr>
+      <tr>
+        <th class="mat-header-cell">Remarks</th>
+        <td class="mat-cell">{{ taskDetails?.remarks }}</td>
+      </tr>
+    </table>
+  </div>
+  <br />
+  <div class="py-2">
+    <div class="row">
+      <div class="col-md-4 col-sm-6">
+        <h5 class="text-primary">Task History</h5>
+      </div>
+    </div>
+  </div>
+  <div class=" historyCard">
+    <mat-card>
+      <mat-card-content>
+    <p-table
+      [value]="taskHistoryDetail"
+      [(selection)]="taskHistoryDetail"
+      selectionMode="multiple"
+      [scrollable]="true"
+      scrollHeight="260px"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Sr.No</th>
+          <th>Task Type</th>
+          <th>Description</th>
+          <th>Priority</th>
+          <th>Assign To</th>
+          <th>Status</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-task let-i="rowIndex">
+        <tr>
+          <td>{{ i + 1 }}</td>
+          <td class="column-left">
+            <span class="image-text">{{ task.taskType }}</span>
+          </td>
+          <td
+            class="column-left"
+            pTooltip="{{ task.description }}"
+            tooltipPosition="top"
+          >
+            <span class="image-text">
+              {{
+                task.description.length > 15
+                  ? (task.description | slice : 0 : 15) + ".."
+                  : task.description
+              }}</span
+            >
+          </td>
+          <!-- <td class="column-left"><span class="image-text">{{task.description}}</span></td> -->
+          <td class="column-left">
+            <span class="image-text" *ngIf="task.priority == 1">High</span>
+            <span class="image-text" *ngIf="task.priority == 2">Medium</span>
+            <span class="image-text" *ngIf="task.priority == 3">Low</span>
+          </td>
+          <!-- <td class="column-left"><span class="image-text">{{task.priority}}</span></td> -->
+          <td class="column-left">
+            <span class="image-text">{{ task.assignedTo }}</span>
+          </td>
+          <td class="column-left">
+            <span class="image-text">{{ task.status }}</span>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</p-dialog>

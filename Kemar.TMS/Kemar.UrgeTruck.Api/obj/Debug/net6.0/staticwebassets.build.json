@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "oPvqNr2jkkU6CdGMBgmtJc/WxCnCSRP5JOKzjbI5KL4=",
+  "Source": "Kemar.TMS.Api",
+  "BasePath": "_content/Kemar.TMS.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

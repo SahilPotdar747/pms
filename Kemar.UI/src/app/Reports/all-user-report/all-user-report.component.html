@@ -1,0 +1,549 @@
+<p-toast position="bottom-right"></p-toast>
+
+<p-tabView>
+  <p-tabPanel
+    header="User Wise Count Summary ({{ projectWiseTaskCount }})"
+    tooltipPosition="left"
+    tooltip="{{ projectWiseTaskCount }}"
+  >
+    <div class="row myDeskfilterClass mt-2">
+      <div class="col-2 text-start mt-2">
+        <span class="">
+          <p-calendar
+            class=""
+            dateFormat="dd/mm/yy"
+            [showButtonBar]="true"
+            placeholder="dd/mm/yyyy"
+            [(ngModel)]="reportCountFromDateFilter"
+            inputId="From"
+          >
+          </p-calendar>
+          <label class="mx-3" for="From"></label>
+        </span>
+      </div>
+      <div class="col-2 text-start mt-2">
+        <span class="">
+          <p-calendar
+            dateFormat="dd/mm/yy"
+            [showButtonBar]="true"
+            placeholder="dd/mm/yyyy"
+            [(ngModel)]="reportcountToDateFilter"
+            inputId="To"
+          >
+          </p-calendar>
+          <label class="mx-3" for="To"> </label>
+        </span>
+      </div>
+      <div class="col-8 text-end">
+        <button
+          class="btn btn-primary mx-2"
+          (click)="getAllUserWiseTaskCountReport()"
+          pTooltip="Search"
+          tooltipPosition="top"
+          matTooltipClass="danger-tooltip"
+          style="font-size: 0.8rem"
+        >
+          <fa-icon [icon]="faSearch"></fa-icon>
+        </button>
+
+        <button
+          class="btn btn-primary mx-2"
+          (click)="DownloadCountReport()"
+          pTooltip="Download"
+          tooltipPosition="top"
+          matTooltipClass="danger-tooltip"
+          style="font-size: 0.8rem"
+        >
+          <fa-icon [icon]="faDownload"></fa-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class=" my-2">
+      <mat-card>
+        <mat-card-content>
+      <p-table
+        #dt1
+        [value]="GetProjectWiseTaskcount"
+        [(selection)]="GetProjectWiseTaskcount"
+        selectionMode="single"
+        dataKey="filter"
+        styleClass="p-datatable-gridlines"
+        responsiveLayout="scroll"
+        [rows]="pageSize"
+        [lazy]="true"
+        [totalRecords]="projectWiseTaskCount"
+        [paginator]="true"
+        currentPageReportTemplate="Total Records: {{ projectWiseTaskCount }}"
+       
+        [showCurrentPageReport]="true"
+        (onPage)="pagechange($event)"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Sr. No</th>
+            <th class="column-left">
+              First Name
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Last Name
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Department Name
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              New Task
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Work In Progress
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              UnAssigned
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Pending
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Overdue
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Closed
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-center">
+              Invalid
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-center">
+              Delegated
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <!-- <th pSortableColumn="designationName" class="column-center">Excepted End Date
+
+                    </th> -->
+            <th class="column-center">
+              Completed
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template
+          pTemplate="body"
+          let-editing="editing"
+          let-projectReport
+          let-i="rowIndex"
+        >
+          <tr>
+            <td class="text-center">
+              {{ i + 1 + pageSize * (currentPage - 1) }}
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ projectReport.firstName }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ projectReport.lastName }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ projectReport.departmentName }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ projectReport.newTask }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ projectReport.wip }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ projectReport.unAssigned }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ projectReport.pending }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ projectReport.overdue }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ projectReport.closed }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ projectReport.invalid }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ projectReport.delegated }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ projectReport.completed }}</span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+        </mat-card-content>
+      </mat-card>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td class="column-center" colspan="40">No Task found.</td>
+        </tr>
+      </ng-template>
+    </div>
+  </p-tabPanel>
+  <p-tabPanel
+    header="User Wise Task Summary ({{ ProjectWiseTask }})"
+    tooltipPosition="left"
+    tooltip="{{ ProjectWiseTask }}"
+  >
+    <div class="row d-flex justify-content-between align-items-baseline myDeskfilterClass mt-2" *ngIf="IsShowDDL1">
+      <div class="col">
+        <span class="">
+          <input
+            id="float-input"
+            type="text"
+            pInputText
+            [(ngModel)]="filterProjectWise"
+            id="filter"
+            (keyup.enter)="Search()"
+            placeholder="Search"
+          />
+       
+        </span>
+      </div>
+
+      <div class="col">
+        <span class="">
+          <p-dropdown
+            inputId="dropdown1"
+            [autoDisplayFirst]="false"
+            [options]="GetAllAssignedBy"
+            [(ngModel)]="selectedUserBy"
+            optionLabel="userName"
+            optionValue="id"
+          ></p-dropdown>
+         
+        </span>
+      </div>
+      <div class="col">
+        <span class="">
+          <p-dropdown
+            inputId="dropdown1"
+            [autoDisplayFirst]="false"
+            [options]="GetAllAssignedTo"
+            [(ngModel)]="selectedUserTo"
+            optionLabel="userName"
+            optionValue="id"
+          ></p-dropdown>
+        
+        </span>
+      </div>
+      <div class="col">
+        <span class="">
+          <p-dropdown
+            inputId="projectName"
+            [autoDisplayFirst]="false"
+            [options]="AllProjectMaster"
+            [(ngModel)]="selectedProject"
+            optionLabel="projectName"
+            optionValue="projectId"
+          ></p-dropdown>
+        
+        </span>
+      </div>
+      <div class="col">
+        <span class="">
+          <p-dropdown
+            inputId="taskName"
+            [autoDisplayFirst]="false"
+            [options]="AllTaskTypeMaster"
+            [(ngModel)]="selectedTask"
+            optionLabel="taskName"
+            optionValue="taskId"
+          ></p-dropdown>
+         
+        </span>
+      </div>
+      <div class="col">
+        <span class="">
+          <p-calendar
+            class=""
+            dateFormat="dd/mm/yy"
+            [showButtonBar]="true"
+            placeholder="dd/mm/yyyy"
+            [(ngModel)]="reportFromDateFilter"
+            inputId="From"
+          >
+          </p-calendar>
+          <label class="mx-3" for="From"></label>
+        </span>
+      </div>
+      <div class="col">
+        <span class="">
+          <p-calendar
+            dateFormat="dd/mm/yy"
+            [showButtonBar]="true"
+            placeholder="dd/mm/yyyy"
+            [(ngModel)]="reportToDateFilter"
+            inputId="To"
+          >
+          </p-calendar>
+          <label class="mx-3" for="To"> </label>
+        </span>
+      </div>
+     
+    </div>
+    <div class="row myDeskfilterClass">
+      <div class="d-flex my-2 justify-content-end" *ngIf="IsShowDDL1">
+        <button
+          class="btn btn-primary mx-2"
+          (click)="getAllUserWiseTask()"
+          pTooltip="Search"
+          tooltipPosition="top"
+          matTooltipClass="danger-tooltip"
+          style="font-size: 0.8rem"
+        >
+          <fa-icon [icon]="faSearch"></fa-icon>
+        </button>
+        <button
+          class="btn btn-primary mx-2"
+          (click)="OnResetDDL_Tab1()"
+          pTooltip="Reset"
+          tooltipPosition="top"
+          matTooltipClass="danger-tooltip"
+          style="font-size: 0.8rem"
+        >
+          Reset
+        </button>
+        <button
+          class="btn btn-primary mx-2"
+          pTooltip="Close Filter"
+          tooltipPosition="top"
+          style="font-size: 0.8rem"
+          matTooltipClass="danger-tooltip"
+          (click)="CloseFilter_Tab2()"
+        >
+          <fa-icon [icon]="faTimes"></fa-icon>
+        </button>
+      </div>
+      <div class="col-12 text-end" *ngIf="isShowFilter1">
+        <button
+          class="btn btn-primary mx-2"
+          (click)="onFilterTab1()"
+          pTooltip="Filter"
+          tooltipPosition="top"
+          matTooltipClass="danger-tooltip"
+          style="font-size: 0.8rem"
+        >
+          Filter
+        </button>
+
+        <button
+          class="btn btn-primary mx-2"
+          (click)="DownloadUserWiseTaskReport()"
+          pTooltip="Download"
+          tooltipPosition="top"
+          matTooltipClass="danger-tooltip"
+          style="font-size: 0.8rem"
+        >
+          <fa-icon [icon]="faDownload"></fa-icon>
+        </button>
+      </div>
+
+      <!-- <div class="col-2 text-start">
+
+      </div> -->
+    </div>
+  
+
+    <div class=" my-2">
+      <mat-card>
+        <mat-card-content>
+      <p-table
+        #dt1
+        [value]="GetProjectWiseTask"
+        [(selection)]="GetProjectWiseTask"
+        selectionMode="single"
+        dataKey="filter"
+        styleClass="p-datatable-gridlines"
+        responsiveLayout="scroll"
+        [rows]="pageSize"
+        [lazy]="true"
+        [totalRecords]="ProjectWiseTask"
+        [paginator]="true"
+        currentPageReportTemplate="Total Records: {{ ProjectWiseTask }}"
+      
+        [showCurrentPageReport]="true"
+        (onPage)="pagechange1($event)"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Sr. No</th>
+            <th class="column-left">
+              Task Title
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Project
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Action Type
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Description
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Priority
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Assigned To
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-left">
+              Assigned By
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-center">
+              Assigned Date
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <th class="column-center">
+              Expected Timeline
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <!-- <th pSortableColumn="designationName" class="column-center">Excepted End Date
+
+                    </th> -->
+            <th class="column-center">
+              Actual Timeline
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+            <!-- <th pSortableColumn="designationName" class="column-center">Actual End Date
+
+                    </th> -->
+            <th class="column-center">
+              Status
+              <!-- <p-sortIcon field="designationName"></p-sortIcon> -->
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template
+          pTemplate="body"
+          let-editing="editing"
+          let-projectReport
+          let-i="rowIndex"
+        >
+          <tr [pEditableRow]="projectReport">
+            <td class="text-center">
+              {{ i + 1 + pageSize * (currentPage - 1) }}
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ projectReport.title }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{
+                projectReport.projectMaster?.projectName
+              }}</span>
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{
+                projectReport.taskTypeMaster?.taskName
+              }}</span>
+            </td>
+            <td
+              class="column-left"
+              pTooltip="{{ projectReport.description }}"
+              tooltipPosition="top"
+            >
+              <span class="image-text">
+                {{
+                  projectReport.description.length > 20
+                    ? (projectReport.description | slice : 0 : 20) + ".."
+                    : projectReport.description
+                }}</span
+              >
+            </td>
+            <td class="column-left">
+              <span class="image-text" *ngIf="projectReport.priority == 1"
+                >High</span
+              >
+              <span class="image-text" *ngIf="projectReport.priority == 2"
+                >Medium</span
+              >
+              <span class="image-text" *ngIf="projectReport.priority == 3"
+                >Low</span
+              >
+            </td>
+            <td class="column-left">
+              <span class="image-text"
+                >{{ projectReport.userManager?.firstName }}
+                {{ projectReport.userManager?.lastName }}</span
+              >
+            </td>
+            <td class="column-left">
+              <span class="image-text">{{ projectReport.assignedBy }}</span>
+            </td>
+            <td class="column-center">
+              <span class="image-text">{{
+                projectReport.assignedDate
+                  | date
+                    : "dd-MMM-yyyy
+                HH:mm"
+              }}</span>
+            </td>
+            <td class="column-center">
+              <span class="image-text"
+                >{{
+                  projectReport.exceptedStartDate
+                    | date
+                      : "dd-MMM-yyyy
+                HH:mm"
+                }}
+                -
+                {{
+                  projectReport.exceptedEndDate | date : "dd-MMM-yyyy HH:mm"
+                }}</span
+              >
+            </td>
+            <!-- <td class="column-center"><span class="image-text">{{task.exceptedEndDate | date: 'dd-MM-yyyy'}}</span></td> -->
+            <td class="column-center">
+              <span
+                class="image-text"
+                *ngIf="projectReport.actualStartDate != null"
+                >{{
+                  projectReport.actualStartDate | date : "dd-MM-yyyy HH:mm"
+                }}</span
+              >
+              <!-- <span class="image-text" *ngIf="task.actualStartDate == null">Task Not Started</span> -->
+              - <br />
+              <span
+                class="image-text"
+                *ngIf="projectReport.actualEndDate != null"
+                >{{
+                  projectReport.actualEndDate | date : "dd-MM-yyyy HH:mm"
+                }}</span
+              >
+              <!-- <span class="image-text" *ngIf="task.actualEndDate == null">Task Not Ended</span> -->
+            </td>
+            <td class="column-center">
+              <span class="image-text">{{ projectReport.status }}</span>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td class="column-center" colspan="40">No Task found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </p-tabPanel>
+</p-tabView>
